@@ -5,15 +5,20 @@ namespace AirportReportApi.Core.Services;
 
 public class AirportReportService : IAirportReportService
 {
-    private IAirportReportRepository _airportReportRepository;
+    private readonly IAirportRepository _airportRepository;
     
-    public AirportReportService(IAirportReportRepository airportReportRepository)
+    public AirportReportService(IAirportRepository airportRepository)
     {
-        _airportReportRepository = airportReportRepository;
+        _airportRepository = airportRepository;
     }
 
-    public AirportReport GetAirportReportById(string id)
+    public Task<string> GetAirportReportById(string id)
     {
-        return _airportReportRepository.GetAirportReportById(id);
+        return _airportRepository.GetAirportDetailsById(id);
+    }
+    
+    private Task<string> GetAirportWeatherById(string id)
+    {
+        return _airportRepository.GetAirportWeatherById(id);
     }
 }

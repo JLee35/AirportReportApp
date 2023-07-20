@@ -1,6 +1,6 @@
 namespace AirportReportApi.Core.Models;
 
-public record AirportReport
+public record AirportDetails
 {
     public string Identifier { get; init; }
     public string Name { get; init; }

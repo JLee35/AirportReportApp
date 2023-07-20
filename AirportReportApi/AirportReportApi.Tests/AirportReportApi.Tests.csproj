@@ -23,4 +23,12 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AirportReportApi\AirportReportApi.Core.csproj" />
+  </ItemGroup>
+
 </Project>

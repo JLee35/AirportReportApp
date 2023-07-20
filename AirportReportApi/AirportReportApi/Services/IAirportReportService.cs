@@ -4,5 +4,5 @@ namespace AirportReportApi.Core.Services;
 
 public interface IAirportReportService
 {
-    public AirportReport GetAirportReportById(string id);
+    public Task<string> GetAirportReportById(string id);
 }

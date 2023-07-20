@@ -1,18 +1,35 @@
 ﻿using AirportReportApi.Core.Data;
 using AirportReportApi.Core.Services;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Dependency Injection.
+
+builder.Services.AddHttpClient("AirportWeatherClient", client =>
+{
+    // Get configuration from appsettings.json.
+    string? weatherApiUrl = builder.Configuration["WeatherApiUrl"];
+    if (weatherApiUrl is not null)
+    {
+        client.BaseAddress = new Uri(weatherApiUrl);
+    }
+    
+    var headers = builder.Configuration.GetSection("WeatherApiHeaders").Get<IEnumerable<Dictionary<string, string>>>();
+    if (headers is null) return;
+    foreach (var header in headers)
+    {
+        client.DefaultRequestHeaders.Add(header["Key"], header["Value"]);
+    }
+});
 builder.Services.AddScoped<IAirportReportService, AirportReportService>();
-builder.Services.AddScoped<IAirportReportRepository, AirportReportRepository>();
+builder.Services.AddScoped<IAirportRepository, AirportRepository>();
+
 
 var app = builder.Build();
 
