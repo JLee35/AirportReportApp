@@ -12,13 +12,13 @@ public class AirportReportService : IAirportReportService
         _airportRepository = airportRepository;
     }
 
-    public Task<string> GetAirportReportById(string id)
+    public async Task<string> GetAirportReportById(string id)
     {
-        return _airportRepository.GetAirportDetailsById(id);
+        return await _airportRepository.GetAirportDetailsById(id);
     }
     
-    private Task<string> GetAirportWeatherById(string id)
+    private async Task<string> GetAirportWeatherById(string id)
     {
-        return _airportRepository.GetAirportWeatherById(id);
+        return await _airportRepository.GetAirportWeatherById(id);
     }
 }

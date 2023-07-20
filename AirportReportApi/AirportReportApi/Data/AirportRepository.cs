@@ -1,28 +1,14 @@
-using AirportReportApi.Core.Models;
-using System.Net.Http;
-using System.Threading.Tasks;
+using AirportReportApi.Core.Services;
 
 namespace AirportReportApi.Core.Data;
 
 public class AirportRepository : IAirportRepository
 {
-    private readonly HttpClient _httpClient;
-    
-    public AirportRepository(HttpClient httpClient)
+    private readonly IHttpClientService _httpClientService;
+    public AirportRepository(IHttpClientService clientService)
     {
-        _httpClient = httpClient;
+        _httpClientService = clientService;
     }
-    
-    // public AirportDetails GetAirportDetailsById(string id)
-    // {
-    //     return new AirportDetails
-    //     {
-    //         Identifier = "KJFK",
-    //         Name = "John F. Kennedy International Airport",
-    //         AvailableRunways = "4",
-    //         LatLong = "40.6413° N, 73.7781° W"
-    //     };
-    // }
 
     public async Task<string> GetAirportDetailsById(string id)
     {
@@ -31,11 +17,13 @@ public class AirportRepository : IAirportRepository
 
     public async Task<string> GetAirportWeatherById(string id)
     {
+        Console.WriteLine("In repository");
         try
         {
-            string requestUrl = _httpClient.BaseAddress + id;
+            HttpClient weatherClient = _httpClientService.GetWeatherClient();
+            string requestUrl = weatherClient.BaseAddress + id;
             
-            HttpResponseMessage response = await _httpClient.GetAsync(requestUrl);
+            HttpResponseMessage response = await weatherClient.GetAsync(requestUrl);
 
             if (response.IsSuccessStatusCode)
             {

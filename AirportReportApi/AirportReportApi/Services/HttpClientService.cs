@@ -36,9 +36,10 @@ public class HttpClientService : IHttpClientService
         
         if (config.Headers is not null)
         {
-            foreach (var header in config.Headers)
+            foreach (var headerField in config.Headers)
             {
-                client.DefaultRequestHeaders.Add(header["Key"], header["Value"]);
+                // Each header field should only have one key-value pair.
+                client.DefaultRequestHeaders.Add(headerField.Keys.First(), headerField.Values.First());
             }
         }
 
