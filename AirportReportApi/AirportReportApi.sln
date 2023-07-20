@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 25.0.1704.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "AirportReportApi\Api.csproj", "{268A8C8E-031B-4BA9-8E32-3660A9B3FE3A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiTests", "ApiTests\ApiTests.csproj", "{D86B1795-E25C-41AD-91DE-5DDC22A527EF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{268A8C8E-031B-4BA9-8E32-3660A9B3FE3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{268A8C8E-031B-4BA9-8E32-3660A9B3FE3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{268A8C8E-031B-4BA9-8E32-3660A9B3FE3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{268A8C8E-031B-4BA9-8E32-3660A9B3FE3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D86B1795-E25C-41AD-91DE-5DDC22A527EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D86B1795-E25C-41AD-91DE-5DDC22A527EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D86B1795-E25C-41AD-91DE-5DDC22A527EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D86B1795-E25C-41AD-91DE-5DDC22A527EF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FB02A421-47B5-4073-ACD4-4DAAA5EB134B}
+	EndGlobalSection
+EndGlobal
