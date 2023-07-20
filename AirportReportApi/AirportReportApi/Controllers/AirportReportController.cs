@@ -1,4 +1,5 @@
 ﻿using AirportReportApi.Core.Models;
+using AirportReportApi.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirportReportApi.Core.Controllers;
@@ -8,25 +9,27 @@ namespace AirportReportApi.Core.Controllers;
 public class AirportReportController : ControllerBase
 {
     
-    private static readonly AirportReport AirportReport = new()
-    {
-        Identifier = "KJFK",
-        Name = "John F. Kennedy International Airport",
-        AvailableRunways = "4L, 4R, 13L, 13R, 22L, 22R, 31L, 31R",
-        LatLong = "40.63980103, -73.77890015"
-    };
-
+    private readonly IAirportReportService _service;
     private readonly ILogger<AirportReportController> _logger;
-
-    public AirportReportController(ILogger<AirportReportController> logger)
+    
+    public AirportReportController(IAirportReportService service, ILogger<AirportReportController> logger)
     {
+        _service = service;
         _logger = logger;
     }
 
-    [HttpGet(Name = "GetAirportReport")]
-    public AirportReport Get()
+    [HttpGet("{id}")]
+    public IActionResult GetAirportReportById(string id)
     {
-        return AirportReport;
+        AirportReport report = _service.GetAirportReportById(id);
+        
+        if (report is null)
+        {
+            _logger.LogInformation($"Airport report with id {id} not found.");
+            return NotFound();
+        }
+        
+        return Ok(report);
     }
 }
 

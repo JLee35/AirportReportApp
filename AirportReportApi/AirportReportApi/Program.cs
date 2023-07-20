@@ -1,4 +1,7 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using AirportReportApi.Core.Data;
+using AirportReportApi.Core.Services;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -6,6 +9,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Dependency Injection.
+builder.Services.AddScoped<IAirportReportService, AirportReportService>();
+builder.Services.AddScoped<IAirportReportRepository, AirportReportRepository>();
 
 var app = builder.Build();
 
