@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AirportReportApi;
+using Microsoft.AspNetCore.Mvc;
 
-namespace AirportReportApi.Controllers;
+namespace Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
