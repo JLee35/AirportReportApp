@@ -7,7 +7,7 @@
 
     <IsPackable>false</IsPackable>
 
-    <RootNamespace>ApiTests</RootNamespace>
+    <RootNamespace>ApiReportApi.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
