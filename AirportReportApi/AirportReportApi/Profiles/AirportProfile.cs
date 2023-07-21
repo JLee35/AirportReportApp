@@ -13,7 +13,10 @@ public class AirportProfile : Profile
             .ForMember(dest => dest.CloudCoverage, opt => opt.MapFrom(src => src.CloudCoverage))
             .ForMember(dest => dest.VisibilitySm, opt => opt.MapFrom(src => src.VisibilitySm))
             .ForMember(dest => dest.WindSpeedMph, opt => opt.MapFrom(src => src.WindSpeedKts))
-            .ForMember(dest => dest.WindDirection, opt => opt.MapFrom(src => GetCardinalDirection(src.WindDirectionDegrees)));
+            .ForMember(dest => dest.ForecastTimeOffset, opt => opt.MapFrom(src => src.TimeOffset))
+            .ForMember(dest => dest.WindDirection,
+                opt => opt.MapFrom(src => GetCardinalDirection(src.WindDirectionDegrees)));
+            
         
         CreateMap<AirportDetailsModel, AirportDto>()
             .ForMember(dest => dest.Identifier, opt => opt.MapFrom(src => src.Identifier))
