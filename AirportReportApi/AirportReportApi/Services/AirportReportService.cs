@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using AutoMapper;
 using System.Text.Json;
@@ -11,13 +12,15 @@ public class AirportReportService : IAirportReportService
 {
     private readonly IAirportRepository _airportRepository;
     private readonly IMapper _mapper;
+    private readonly ILogger<ApplicationLog> _logger;
 
     private delegate AirportWeatherModel WeatherCollectionDelegate(AirportWeatherModel weatherModel, JsonElement parentElement);
     
-    public AirportReportService(IAirportRepository airportRepository, IMapper mapper)
+    public AirportReportService(IAirportRepository airportRepository, IMapper mapper, ILogger<ApplicationLog> logger)
     {
         _airportRepository = airportRepository;
         _mapper = mapper;
+        _logger = logger;
     }
 
     public async Task<AirportDto> GetAirportReportById(string id)
@@ -58,12 +61,11 @@ public class AirportReportService : IAirportReportService
     private async Task<AirportWeatherModel> GetAirportWeatherById(string id)
     {
         AirportWeatherModel weatherModel = new();
-        string weather;
         JsonElement conditionsElement, forecastConditionsElement, forecastPeriodElement;
         
         try
         {
-            weather = await _airportRepository.GetAirportInformationById(id, ReportType.Weather);
+            var weather = await _airportRepository.GetAirportInformationById(id, ReportType.Weather);
             JsonElement rootElement = GetRootElement(weather);
             JsonElement reportElement = rootElement.GetProperty("report");
             conditionsElement = reportElement.GetProperty("conditions");
@@ -73,7 +75,7 @@ public class AirportReportService : IAirportReportService
         }
         catch (KeyNotFoundException ex)
         {
-            Console.WriteLine(ex);
+            _logger.LogError("Exception occurred while gathering weather: {ExMessage}", ex.Message);
             return weatherModel;
         }
         
@@ -97,7 +99,7 @@ public class AirportReportService : IAirportReportService
         return weatherModel;
     }
 
-    private static AirportWeatherModel AddTempVisibilityAndHumidity(JsonElement conditionsElement,
+    private AirportWeatherModel AddTempVisibilityAndHumidity(JsonElement conditionsElement,
         AirportWeatherModel weatherModel)
     {
         weatherModel = GetWeatherByCategory((weather, conditions) =>
@@ -116,7 +118,7 @@ public class AirportReportService : IAirportReportService
         return weatherModel;
     }
 
-    private static AirportWeatherModel AddWind(JsonElement conditionsElement, AirportWeatherModel weatherModel)
+    private AirportWeatherModel AddWind(JsonElement conditionsElement, AirportWeatherModel weatherModel)
     {
         weatherModel = GetWeatherByCategory((weather, conditions) =>
         {
@@ -139,7 +141,7 @@ public class AirportReportService : IAirportReportService
         return weatherModel;
     }
 
-    private static AirportWeatherModel AddClouds(JsonElement conditionsElement,
+    private AirportWeatherModel AddClouds(JsonElement conditionsElement,
         AirportWeatherModel weatherModel)
     {
         weatherModel = GetWeatherByCategory((weather, conditions) =>
@@ -153,7 +155,7 @@ public class AirportReportService : IAirportReportService
         return weatherModel;
     }
 
-    private static AirportWeatherModel GetWeatherByCategory(
+    private AirportWeatherModel GetWeatherByCategory(
         WeatherCollectionDelegate collectionDelegate, 
         AirportWeatherModel weatherModel, JsonElement parentElement)
     {
@@ -163,13 +165,13 @@ public class AirportReportService : IAirportReportService
         }
         catch (KeyNotFoundException ex)
         {
-            Console.WriteLine($"Exception occurred while gathering weather: {ex.Message}");
+            _logger.LogError("Exception occurred while gathering weather: {ExMessage}", ex.Message);
         }
 
         return weatherModel;
     }
     
-    private static WeatherForecastModel GetWeatherForecast(JsonElement forecastConditionsElement)
+    private WeatherForecastModel GetWeatherForecast(JsonElement forecastConditionsElement)
     {
         WeatherForecastModel weatherForecastModel = new()
         {
@@ -178,7 +180,7 @@ public class AirportReportService : IAirportReportService
         return weatherForecastModel;
     }
 
-    private static List<WindForecastModel> GetWindForecastModels(JsonElement conditionsElement)
+    private List<WindForecastModel> GetWindForecastModels(JsonElement conditionsElement)
     {
         List<WindForecastModel> windForecastModels = new();
         var conditions = GetChildElements(conditionsElement);
@@ -208,8 +210,7 @@ public class AirportReportService : IAirportReportService
             }
             catch (KeyNotFoundException ex)
             {
-                // TODO: Log exception with Logger.
-                Console.WriteLine($"Exception raised: {ex.Message}");
+                _logger.LogError("Exception raised: {ExMessage}", ex.Message);
             }
         }
 
@@ -265,7 +266,8 @@ public class AirportReportService : IAirportReportService
             var coverage = element.GetProperty("coverage").GetString();
             var altitudeFt = element.GetProperty("altitudeFt").GetDecimal();
             var isCeiling = element.GetProperty("ceiling").GetBoolean();
-            
+
+            Debug.Assert(coverage != null, nameof(coverage) + " != null");
             cloudModels.Add(new CloudModel
             {
                 Coverage = CloudModel.CoverageMap[coverage],
