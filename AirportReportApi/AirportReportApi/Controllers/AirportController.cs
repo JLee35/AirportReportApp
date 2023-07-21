@@ -23,7 +23,7 @@ public class AirportController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAirportById(string id)
     {
-        AirportDetailsModel details = await _service.GetAirportReportById(id);
+        AirportWeatherModel details = await _service.GetAirportReportById(id);
 
         return Ok(details);
     }

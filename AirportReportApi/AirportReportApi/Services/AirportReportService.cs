@@ -17,15 +17,28 @@ public class AirportReportService : IAirportReportService
         _mapper = mapper;
     }
 
-    public async Task<AirportDetailsModel> GetAirportReportById(string id)
+    public async Task<AirportWeatherModel> GetAirportReportById(string id)
     {
         // return await _airportRepository.GetAirportWeatherById(id);
+        string weather = await _airportRepository.GetAirportWeatherById(id);
+        JsonElement weatherRootElement = GetRootElement(weather);
+        JsonElement parentElement = weatherRootElement.GetProperty("report").GetProperty("conditions");
         
-        string data = await _airportRepository.GetAirportDetailsById(id);
-        
-        var airportDetailsModel = MapAirportDetails(data);
+        var airportWeatherModel = MapAirportWeather(parentElement);
+        return airportWeatherModel;
 
-        return airportDetailsModel;
+        // string details = await _airportRepository.GetAirportDetailsById(id);
+        // JsonElement detailsRootElement = GetRootElement(details);
+        // var airportDetailsModel = MapAirportDetails(detailsRootElement);
+        // return airportDetailsModel;
+    }
+
+    private JsonElement GetRootElement(string data)
+    {
+        JsonDocument jsonDocument = JsonDocument.Parse(data);
+        JsonElement rootElement = jsonDocument.RootElement;
+
+        return rootElement;
     }
 
     private async Task<string> GetAirportDetailsById(string id)
@@ -37,12 +50,29 @@ public class AirportReportService : IAirportReportService
     {
         return await _airportRepository.GetAirportWeatherById(id);
     }
-    
-    private AirportDetailsModel MapAirportDetails(string data)
-    {
-        JsonDocument jsonDocument = JsonDocument.Parse(data);
-        JsonElement rootElement = jsonDocument.RootElement;
 
+    private AirportWeatherModel MapAirportWeather(JsonElement parentElement)
+    {
+        var tempC = parentElement.GetProperty("tempC").GetDecimal();
+        var relativeHumidityPercent = parentElement.GetProperty("relativeHumidity").GetInt16();
+        var visibilitySm = parentElement.GetProperty("visibility").GetProperty("distanceSm").GetDecimal();
+        var windSpeedMph = parentElement.GetProperty("wind").GetProperty("speedKts").GetDecimal();
+        var windDirectionMagnetic = parentElement.GetProperty("wind").GetProperty("direction").GetInt16();
+        var cloudCoverage = GetCloudCoverage(parentElement);
+        
+        return new AirportWeatherModel
+        {
+            Temperature = tempC.ToString(CultureInfo.InvariantCulture),
+            RelativeHumidity = relativeHumidityPercent.ToString(CultureInfo.InvariantCulture),
+            CloudCoverage = cloudCoverage,
+            Visibility = visibilitySm.ToString(CultureInfo.InvariantCulture),
+            WindSpeed = windSpeedMph.ToString(CultureInfo.InvariantCulture),
+            WindDirection = windDirectionMagnetic.ToString(CultureInfo.InvariantCulture)
+        };
+    }
+    
+    private AirportDetailsModel MapAirportDetails(JsonElement rootElement)
+    {
         string? icao = rootElement.GetProperty("icao").GetString();
         string? name = rootElement.GetProperty("name").GetString();
         
@@ -65,7 +95,13 @@ public class AirportReportService : IAirportReportService
         };
     }
 
-    private List<RunwayModel> MapRunways(JsonElement runways)
+    private static string GetCloudCoverage(JsonElement clouds)
+    {
+        // TODO: Get actual coverage from JsonElement.
+        return "bad!";
+    }
+
+    private static List<RunwayModel> MapRunways(JsonElement runways)
     {
         // Foreach runway in runways, map to RunwayModel.
         // Return list of RunwayModel.
@@ -93,10 +129,10 @@ public class AirportReportService : IAirportReportService
         
         foreach (var element in elements)
         {
-            string ident = element.GetProperty("ident").GetString();
-            string name = element.GetProperty("name").GetString();
+            string? ident = element.GetProperty("ident").GetString();
+            string? name = element.GetProperty("name").GetString();
             int magneticHeading = element.GetProperty("magneticHeading").GetInt16();
-            string recipName = element.GetProperty("recipName").GetString();
+            string? recipName = element.GetProperty("recipName").GetString();
             int recipMagneticHeading = element.GetProperty("recipMagneticHeading").GetInt16();
             
             runwayModels.Add(new RunwayModel

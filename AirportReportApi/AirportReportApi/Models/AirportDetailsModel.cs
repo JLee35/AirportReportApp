@@ -7,6 +7,4 @@ public record AirportDetailsModel
     public string? Latitude { get; init; }
     public string? Longitude { get; init; }
     public List<RunwayModel>? Runways { get; init; }
-    
-    // More to come...
 }
