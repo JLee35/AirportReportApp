@@ -195,10 +195,12 @@ public class AirportReportService : IAirportReportService
                     IsWindVariable = isWindVariable
                 };
 
-                if (isWindVariable) continue;
-                short windDirectionDegrees = windElement.GetProperty("direction").GetInt16();
-                windForecastModel.WindDirectionDegrees = windDirectionDegrees;
-
+                if (!isWindVariable)
+                {
+                    short windDirectionDegrees = windElement.GetProperty("direction").GetInt16();
+                    windForecastModel.WindDirectionDegrees = windDirectionDegrees;    
+                }
+                
                 windForecastModels.Add(windForecastModel);
             }
             catch (KeyNotFoundException ex)
@@ -206,8 +208,6 @@ public class AirportReportService : IAirportReportService
                 // TODO: Log exception with Logger.
                 Console.WriteLine($"Exception raised: {ex.Message}");
             }
-
-            return windForecastModels;
         }
 
         return windForecastModels;
