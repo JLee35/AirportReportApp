@@ -52,20 +52,27 @@ public class AirportReportService : IAirportReportService
     private async Task<AirportWeatherModel> GetAirportWeatherById(string id)
     {
         string weather = await _airportRepository.GetAirportWeatherById(id);
-        JsonElement weatherRootElement = GetRootElement(weather);
-        JsonElement parentElement = weatherRootElement.GetProperty("report").GetProperty("conditions");
+        JsonElement rootElement = GetRootElement(weather);
+        JsonElement reportElement = rootElement.GetProperty("report");
+        JsonElement conditionsElement = reportElement.GetProperty("conditions");
+        JsonElement forecastElement = reportElement.GetProperty("forecast");
+        JsonElement forecastConditionsElement = forecastElement.GetProperty("conditions");
         
-        return MapAirportWeather(parentElement);
+        AirportWeatherModel weatherModel = MapCurrentAirportWeather(conditionsElement);
+        var weatherForecasts = GetWeatherForecasts(forecastConditionsElement);
+        weatherModel.WeatherForecasts = weatherForecasts;
+
+        return weatherModel;
     }
 
-    private AirportWeatherModel MapAirportWeather(JsonElement parentElement)
+    private AirportWeatherModel MapCurrentAirportWeather(JsonElement conditionsElement)
     {
-        var tempC = parentElement.GetProperty("tempC").GetDecimal();
-        var relativeHumidityPercent = parentElement.GetProperty("relativeHumidity").GetInt16();
-        var visibilitySm = parentElement.GetProperty("visibility").GetProperty("distanceSm").GetDecimal();
-        var windSpeedMph = parentElement.GetProperty("wind").GetProperty("speedKts").GetDecimal();
-        var windDirectionMagnetic = parentElement.GetProperty("wind").GetProperty("direction").GetInt16();
-        var cloudCoverage = GetCloudCoverage(parentElement.GetProperty("cloudLayers"));
+        var tempC = conditionsElement.GetProperty("tempC").GetDecimal();
+        var relativeHumidityPercent = conditionsElement.GetProperty("relativeHumidity").GetInt16();
+        var visibilitySm = conditionsElement.GetProperty("visibility").GetProperty("distanceSm").GetDecimal();
+        var windSpeedMph = conditionsElement.GetProperty("wind").GetProperty("speedKts").GetDecimal();
+        var windDirectionMagnetic = conditionsElement.GetProperty("wind").GetProperty("direction").GetInt16();
+        var cloudCoverage = GetCloudCoverage(conditionsElement.GetProperty("cloudLayers"));
         
         return new AirportWeatherModel
         {
@@ -73,9 +80,28 @@ public class AirportReportService : IAirportReportService
             RelativeHumidityPercentage = relativeHumidityPercent,
             CloudCoverage = cloudCoverage,
             VisibilitySm = visibilitySm,
-            WindSpeedMph = windSpeedMph,
+            WindSpeedKts = windSpeedMph,
             WindDirectionDegrees = windDirectionMagnetic
         };
+    }
+    
+    private static List<WeatherForecastModel> GetWeatherForecasts(JsonElement conditionsElement)
+    {
+        List<WeatherForecastModel> weatherForecastModels = new();
+        var conditions = GetChildElements(conditionsElement);
+        foreach (var condition in conditions)
+        {
+            var windSpeedKts = condition.GetProperty("wind").GetProperty("speedKts").GetDecimal();
+            var windDirectionDegrees = condition.GetProperty("wind").GetProperty("direction").GetInt16();
+            
+            weatherForecastModels.Add(new WeatherForecastModel
+            {
+                WindSpeedKts = windSpeedKts,
+                WindDirectionDegrees = windDirectionDegrees
+            });
+        }
+
+        return weatherForecastModels;
     }
     
     private AirportDetailsModel MapAirportDetails(JsonElement rootElement)

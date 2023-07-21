@@ -12,7 +12,7 @@ public class AirportProfile : Profile
             .ForMember(dest => dest.RelativeHumidity, opt => opt.MapFrom(src => src.RelativeHumidityPercentage))
             .ForMember(dest => dest.CloudCoverage, opt => opt.MapFrom(src => src.CloudCoverage))
             .ForMember(dest => dest.VisibilitySm, opt => opt.MapFrom(src => src.VisibilitySm))
-            .ForMember(dest => dest.WindSpeedMph, opt => opt.MapFrom(src => src.WindSpeedMph))
+            .ForMember(dest => dest.WindSpeedMph, opt => opt.MapFrom(src => src.WindSpeedKts))
             .ForMember(dest => dest.WindDirection, opt => opt.MapFrom(src => GetCardinalDirection(src.WindDirectionDegrees)));
         
         CreateMap<AirportDetailsModel, AirportDto>()
