@@ -1,6 +1,6 @@
 namespace AirportReportApi.Core.Models;
 
-public record AirportWeather
+public record AirportWeatherModel
 {
     public string? Temperature { get; init; }
     public string? RelativeHumidity { get; init; }

@@ -1,5 +1,6 @@
-﻿using AirportReportApi.Core.Data;
-using AirportReportApi.Core.Models;
+﻿using AirportReportApi.Core.Configurations;
+using AirportReportApi.Core.Data;
+using AirportReportApi.Core.Repositories;
 using AirportReportApi.Core.Services;
 using Microsoft.Extensions.Options;
 
@@ -17,14 +18,18 @@ builder.Services.AddSingleton(provider => provider.GetRequiredService<IOptions<A
 builder.Services.Configure<AirportDetailsConfig>(configuration.GetSection("DetailsApiConfig"));
 builder.Services.AddSingleton(provider => provider.GetRequiredService<IOptions<AirportDetailsConfig>>().Value);
 
+// Services to be injected.
+builder.Services.AddScoped<IHttpClientService, HttpClientService>();
+builder.Services.AddScoped<IAirportReportService, AirportReportService>();
+builder.Services.AddScoped<IAirportRepository, AirportRepository>();
+builder.Services.AddAutoMapper(typeof(Program));
+
 // Enable CORS.
 var corsOrigins = configuration.GetSection("WebApiOrigins").Get<List<string>>();
-
 if (corsOrigins is null)
 {
     throw new Exception("WebApiOrigins is not configured.");
 }
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "_allowWebApiOrigins",
@@ -33,11 +38,6 @@ builder.Services.AddCors(options =>
             policy.WithOrigins(corsOrigins.ToArray());
         });
 });
-
-// Services to be injected.
-builder.Services.AddScoped<IHttpClientService, HttpClientService>();
-builder.Services.AddScoped<IAirportReportService, AirportReportService>();
-builder.Services.AddScoped<IAirportRepository, AirportRepository>();
 
 var app = builder.Build();
 

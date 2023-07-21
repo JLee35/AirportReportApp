@@ -1,6 +1,7 @@
+using AirportReportApi.Core.Data;
 using AirportReportApi.Core.Services;
 
-namespace AirportReportApi.Core.Data;
+namespace AirportReportApi.Core.Repositories;
 
 public class AirportRepository : IAirportRepository
 {
@@ -12,12 +13,30 @@ public class AirportRepository : IAirportRepository
 
     public async Task<string> GetAirportDetailsById(string id)
     {
-        return await Task.FromResult("Airport details");
+        try
+        {
+            HttpClient detailsClient = _httpClientService.GetDetailsClient();
+            string requestUrl = detailsClient.BaseAddress + id;
+
+            HttpResponseMessage response = await detailsClient.GetAsync(requestUrl);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+
+            return await Task.FromResult("Problem!");
+        }
+        catch (HttpRequestException ex)
+        {
+            // TODO: Log exception.
+            Console.WriteLine(ex);
+            return await Task.FromResult("Problem!");
+        }
     }
 
     public async Task<string> GetAirportWeatherById(string id)
     {
-        Console.WriteLine("In repository");
         try
         {
             HttpClient weatherClient = _httpClientService.GetWeatherClient();

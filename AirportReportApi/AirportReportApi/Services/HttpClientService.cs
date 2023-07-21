@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Text;
+using AirportReportApi.Core.Configurations;
 using AirportReportApi.Core.Models;
 
 namespace AirportReportApi.Core.Services;

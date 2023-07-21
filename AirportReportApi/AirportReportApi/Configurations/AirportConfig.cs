@@ -1,4 +1,4 @@
-namespace AirportReportApi.Core.Models;
+namespace AirportReportApi.Core.Configurations;
 
 public class AirportConfig
 {
