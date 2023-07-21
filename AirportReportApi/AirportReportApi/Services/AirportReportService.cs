@@ -56,23 +56,23 @@ public class AirportReportService : IAirportReportService
     {
         AirportWeatherModel weatherModel = new();
         string weather;
-
+        JsonElement conditionsElement, forecastConditionsElement, forecastPeriodElement;
+        
         try
         {
             weather = await _airportRepository.GetAirportInformationById(id, ReportType.Weather);
+            JsonElement rootElement = GetRootElement(weather);
+            JsonElement reportElement = rootElement.GetProperty("report");
+            conditionsElement = reportElement.GetProperty("conditions");
+            JsonElement forecastElement = reportElement.GetProperty("forecast");
+            forecastConditionsElement = forecastElement.GetProperty("conditions");
+            forecastPeriodElement = forecastElement.GetProperty("period");
         }
-        catch (Exception ex)
+        catch (KeyNotFoundException ex)
         {
             Console.WriteLine(ex);
             return weatherModel;
         }
-        
-        JsonElement rootElement = GetRootElement(weather);
-        JsonElement reportElement = rootElement.GetProperty("report");
-        JsonElement conditionsElement = reportElement.GetProperty("conditions");
-        JsonElement forecastElement = reportElement.GetProperty("forecast");
-        JsonElement forecastConditionsElement = forecastElement.GetProperty("conditions");
-        JsonElement forecastPeriodElement = forecastElement.GetProperty("period");
         
         weatherModel = MapCurrentAirportWeather(conditionsElement);
         var weatherForecast = GetWeatherForecast(forecastConditionsElement);
