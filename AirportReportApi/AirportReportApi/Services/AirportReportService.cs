@@ -3,7 +3,6 @@ using AirportReportApi.Core.Data;
 using AutoMapper;
 using System.Text.Json;
 using AirportReportApi.Core.Models;
-using AirportReportApi.Core.Profiles;
 
 namespace AirportReportApi.Core.Services;
 
@@ -20,16 +19,8 @@ public class AirportReportService : IAirportReportService
 
     public async Task<AirportDto> GetAirportReportById(string id)
     {
-        // return await _airportRepository.GetAirportWeatherById(id);
-        string weather = await _airportRepository.GetAirportWeatherById(id);
-        JsonElement weatherRootElement = GetRootElement(weather);
-        JsonElement parentElement = weatherRootElement.GetProperty("report").GetProperty("conditions");
-        
-        var airportWeatherModel = MapAirportWeather(parentElement);
-        
-        string details = await _airportRepository.GetAirportDetailsById(id);
-        JsonElement detailsRootElement = GetRootElement(details);
-        var airportDetailsModel = MapAirportDetails(detailsRootElement);
+        AirportWeatherModel airportWeatherModel = await GetAirportWeatherById(id);
+        AirportDetailsModel airportDetailsModel = await GetAirportDetailsById(id);
         
         AirportDto airportDto = _mapper.Map<AirportDto>(airportDetailsModel);
         airportDto = _mapper.Map(airportWeatherModel, airportDto);
@@ -44,14 +35,20 @@ public class AirportReportService : IAirportReportService
         return rootElement;
     }
 
-    private async Task<string> GetAirportDetailsById(string id)
+    private async Task<AirportDetailsModel> GetAirportDetailsById(string id)
     {
-        return await _airportRepository.GetAirportDetailsById(id);
+        string details = await _airportRepository.GetAirportDetailsById(id);
+        JsonElement detailsRootElement = GetRootElement(details);
+        return MapAirportDetails(detailsRootElement);
     }
     
-    private async Task<string> GetAirportWeatherById(string id)
+    private async Task<AirportWeatherModel> GetAirportWeatherById(string id)
     {
-        return await _airportRepository.GetAirportWeatherById(id);
+        string weather = await _airportRepository.GetAirportWeatherById(id);
+        JsonElement weatherRootElement = GetRootElement(weather);
+        JsonElement parentElement = weatherRootElement.GetProperty("report").GetProperty("conditions");
+        
+        return MapAirportWeather(parentElement);
     }
 
     private AirportWeatherModel MapAirportWeather(JsonElement parentElement)
@@ -61,7 +58,7 @@ public class AirportReportService : IAirportReportService
         var visibilitySm = parentElement.GetProperty("visibility").GetProperty("distanceSm").GetDecimal();
         var windSpeedMph = parentElement.GetProperty("wind").GetProperty("speedKts").GetDecimal();
         var windDirectionMagnetic = parentElement.GetProperty("wind").GetProperty("direction").GetInt16();
-        var cloudCoverage = GetCloudCoverage(parentElement);
+        var cloudCoverage = GetCloudCoverage(parentElement.GetProperty("cloudLayers"));
         
         return new AirportWeatherModel
         {
@@ -76,13 +73,13 @@ public class AirportReportService : IAirportReportService
     
     private AirportDetailsModel MapAirportDetails(JsonElement rootElement)
     {
-        string? icao = rootElement.GetProperty("icao").GetString();
-        string? name = rootElement.GetProperty("name").GetString();
+        var icao = rootElement.GetProperty("icao").GetString();
+        var name = rootElement.GetProperty("name").GetString();
         
         // Not sure if culture invariance is necessary, but may help
         // in situations where the API returns a decimal with a comma.
-        string? latitude = rootElement.GetProperty("latitude").GetDecimal().ToString(CultureInfo.InvariantCulture);
-        string? longitude = rootElement.GetProperty("longitude").GetDecimal().ToString(CultureInfo.InvariantCulture);
+        var latitude = rootElement.GetProperty("latitude").GetDecimal().ToString(CultureInfo.InvariantCulture);
+        var longitude = rootElement.GetProperty("longitude").GetDecimal().ToString(CultureInfo.InvariantCulture);
 
         JsonElement runways = rootElement.GetProperty("runways");
         
@@ -100,54 +97,68 @@ public class AirportReportService : IAirportReportService
 
     private static string GetCloudCoverage(JsonElement clouds)
     {
-        // TODO: Get actual coverage from JsonElement.
-        return "bad!";
+        List<CloudModel> cloudModels = new();
+        var elements = GetChildElements(clouds);
+        foreach (var element in elements)
+        {
+            var coverage = element.GetProperty("coverage").GetString();
+            var altitudeFt = element.GetProperty("altitudeFt").GetDecimal();
+            var isCeiling = element.GetProperty("ceiling").GetBoolean();
+            
+            cloudModels.Add(new CloudModel
+            {
+                Coverage = coverage,
+                AltitudeFeet = altitudeFt,
+                IsCeiling = isCeiling
+            });
+        }
+        
+        CloudCoverageModel cloudCoverageModel = new CloudCoverageModel
+        {
+            Clouds = cloudModels
+        };
+
+        return cloudCoverageModel.GetCoverageSummary();
     }
 
     private static List<RunwayModel> MapRunways(JsonElement runways)
     {
         // Foreach runway in runways, map to RunwayModel.
         // Return list of RunwayModel.
-        
-        List<RunwayModel> runwayModels = new List<RunwayModel>();
-        
-        if (runways.ValueKind != JsonValueKind.Array)
-        {
-            // This is a problem, because all airports
-            // should have at least one runway.
-            // Will leave since this won't go into production
-            // and can assume that the API will always return
-            // a list of runways.
-            return new List<RunwayModel>();
-        }
+        var elements = GetChildElements(runways);
 
-        var elements = new JsonElement[runways.GetArrayLength()];
-        int index = 0;
-
-        foreach (JsonElement element in runways.EnumerateArray())
-        {
-            elements[index] = element;
-            index++;
-        }
-        
-        foreach (var element in elements)
-        {
-            string? ident = element.GetProperty("ident").GetString();
-            string? name = element.GetProperty("name").GetString();
-            int magneticHeading = element.GetProperty("magneticHeading").GetInt16();
-            string? recipName = element.GetProperty("recipName").GetString();
-            int recipMagneticHeading = element.GetProperty("recipMagneticHeading").GetInt16();
-            
-            runwayModels.Add(new RunwayModel
+        return (from element in elements
+            let ident = element.GetProperty("ident").GetString()
+            let name = element.GetProperty("name").GetString()
+            let magneticHeading = element.GetProperty("magneticHeading").GetInt16()
+            let recipName = element.GetProperty("recipName").GetString()
+            let recipMagneticHeading = element.GetProperty("recipMagneticHeading").GetInt16()
+            select new RunwayModel
             {
                 Identifier = ident,
                 Name = name,
                 MagneticHeading = magneticHeading,
                 ReciprocalName = recipName,
                 ReciprocalMagneticHeading = recipMagneticHeading
-            });
+            }).ToList();
+    }
+
+    private static JsonElement[] GetChildElements(JsonElement parent)
+    {
+        if (parent.ValueKind != JsonValueKind.Array)
+        {
+            return Array.Empty<JsonElement>();
         }
 
-        return runwayModels;
+        var children = new JsonElement[parent.GetArrayLength()];
+        var index = 0;
+
+        foreach (var element in parent.EnumerateArray())
+        {
+            children[index] = element;
+            index++;
+        }
+
+        return children;
     }
 }
