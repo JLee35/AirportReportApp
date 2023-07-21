@@ -3,6 +3,7 @@ using AirportReportApi.Core.Data;
 using AutoMapper;
 using System.Text.Json;
 using AirportReportApi.Core.Models;
+using AirportReportApi.Core.Profiles;
 
 namespace AirportReportApi.Core.Services;
 
@@ -17,7 +18,7 @@ public class AirportReportService : IAirportReportService
         _mapper = mapper;
     }
 
-    public async Task<AirportWeatherModel> GetAirportReportById(string id)
+    public async Task<AirportDto> GetAirportReportById(string id)
     {
         // return await _airportRepository.GetAirportWeatherById(id);
         string weather = await _airportRepository.GetAirportWeatherById(id);
@@ -25,12 +26,14 @@ public class AirportReportService : IAirportReportService
         JsonElement parentElement = weatherRootElement.GetProperty("report").GetProperty("conditions");
         
         var airportWeatherModel = MapAirportWeather(parentElement);
-        return airportWeatherModel;
-
-        // string details = await _airportRepository.GetAirportDetailsById(id);
-        // JsonElement detailsRootElement = GetRootElement(details);
-        // var airportDetailsModel = MapAirportDetails(detailsRootElement);
-        // return airportDetailsModel;
+        
+        string details = await _airportRepository.GetAirportDetailsById(id);
+        JsonElement detailsRootElement = GetRootElement(details);
+        var airportDetailsModel = MapAirportDetails(detailsRootElement);
+        
+        AirportDto airportDto = _mapper.Map<AirportDto>(airportDetailsModel);
+        airportDto = _mapper.Map(airportWeatherModel, airportDto);
+        return airportDto;
     }
 
     private JsonElement GetRootElement(string data)

@@ -23,9 +23,9 @@ public class AirportController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAirportById(string id)
     {
-        AirportWeatherModel details = await _service.GetAirportReportById(id);
+        AirportDto dto = await _service.GetAirportReportById(id);
 
-        return Ok(details);
+        return Ok(dto);
     }
 }
 
