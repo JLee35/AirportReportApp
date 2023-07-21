@@ -21,17 +21,34 @@ public class AirportController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAirportById(string id)
     {
-        _logger.LogInformation("GetAirportById called with id: {id}", id);
+        _logger.LogInformation("GetAirportById called with id: {Id}", id);
         AirportDto? dto = await _service.GetAirportReportById(id);
         
         if (dto == null)
         {
-            _logger.LogInformation("GetAirportById did not find an airport with id: {id}", id);
-            return NotFound();
+            var message = $"Airport with id {id} not found";
+            _logger.LogInformation(message);
+            return NotFound(message);
         }
         
-        _logger.LogInformation("GetAirportById returning dto: {dto}", dto);
+        _logger.LogInformation("GetAirportById returning dto: {Dto}", dto);
         return Ok(dto);
+    }
+
+    [HttpPost("multiple")]
+    public async Task<IActionResult> GetAirportsByIds([FromBody] List<string> ids)
+    {
+        _logger.LogInformation("GetAirportsByIds called with ids: {Ids}", ids);
+
+        List<AirportDto> airports = await _service.GetAirportReportsByIds(ids);
+
+        if (airports.Count == 0)
+        {
+            return NotFound("No airports found");
+        }
+        
+        _logger.LogInformation("GetAirportsByIds returning airports: {Airports}", airports);
+        return Ok(airports);
     }
 }
 

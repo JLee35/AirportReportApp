@@ -31,7 +31,7 @@ public class AirportReportService : IAirportReportService
     /// <returns>AirportDto</returns>
     public async Task<AirportDto> GetAirportReportById(string id)
     {
-        _logger.LogInformation("GetAirportReportById called with id: {id}", id);
+        _logger.LogInformation("GetAirportReportById called with id: {Id}", id);
         
         AirportWeatherModel airportWeatherModel = await GetAirportWeatherById(id);
         AirportDetailsModel airportDetailsModel = await GetAirportDetailsById(id);
@@ -40,6 +40,19 @@ public class AirportReportService : IAirportReportService
         airportDetailsModel.SetBestRunway(airportWeatherModel.WindDirectionDegrees);
         
         return GetAirportDto(airportWeatherModel, airportDetailsModel);
+    }
+
+    public async Task<List<AirportDto>> GetAirportReportsByIds(List<string> ids)
+    {
+        List<AirportDto> airports = new();
+
+        foreach (string id in ids)
+        {
+            AirportDto airport = await GetAirportReportById(id);
+            airports.Add(airport);
+        }
+
+        return airports;
     }
 
     private AirportDto GetAirportDto(AirportWeatherModel airportWeatherModel,
@@ -68,7 +81,7 @@ public class AirportReportService : IAirportReportService
     
     private async Task<AirportWeatherModel> GetAirportWeatherById(string id)
     {
-        _logger.LogInformation("GetAirportWeatherById called with id: {id}", id);
+        _logger.LogInformation("GetAirportWeatherById called with id: {Id}", id);
         
         AirportWeatherModel weatherModel = new();
         JsonElement conditionsElement, forecastConditionsElement, forecastPeriodElement;
@@ -96,7 +109,7 @@ public class AirportReportService : IAirportReportService
         // Get time offset.
         weatherModel.WeatherForecast.TimeOffset = GetForecastTimeOffset(forecastPeriodElement);
         
-        _logger.LogInformation("GetAirportWeatherById returning weatherModel: {weatherModel}", weatherModel);
+        _logger.LogInformation("GetAirportWeatherById returning weatherModel: {WeatherModel}", weatherModel);
         return weatherModel;
     }
 
