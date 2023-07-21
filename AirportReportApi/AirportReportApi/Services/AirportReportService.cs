@@ -25,6 +25,9 @@ public class AirportReportService : IAirportReportService
         AirportWeatherModel airportWeatherModel = await GetAirportWeatherById(id);
         AirportDetailsModel airportDetailsModel = await GetAirportDetailsById(id);
         
+        // Set best runway for wind now that we have both pieces of information.
+        airportDetailsModel.SetBestRunway(airportWeatherModel.WindDirectionDegrees);
+        
         return GetAirportDto(airportWeatherModel, airportDetailsModel);
     }
 
@@ -284,21 +287,30 @@ public class AirportReportService : IAirportReportService
         // Foreach runway in runways, map to RunwayModel.
         // Return list of RunwayModel.
         var elements = GetChildElements(runways);
+        
+        List<RunwayModel> runwayModels = new();
 
-        return (from element in elements
-            let ident = element.GetProperty("ident").GetString()
-            let name = element.GetProperty("name").GetString()
-            let magneticHeading = element.GetProperty("magneticHeading").GetInt16()
-            let recipName = element.GetProperty("recipName").GetString()
-            let recipMagneticHeading = element.GetProperty("recipMagneticHeading").GetInt16()
-            select new RunwayModel
+        foreach (var element in elements)
+        {
+            var name = element.GetProperty("name").GetString();
+            var magneticHeading = element.GetProperty("magneticHeading").GetInt16();
+            var recipName = element.GetProperty("recipName").GetString();
+            var recipMagneticHeading = element.GetProperty("recipMagneticHeading").GetInt16();
+            
+            runwayModels.Add(new RunwayModel
             {
-                Identifier = ident,
                 Name = name,
-                MagneticHeading = magneticHeading,
-                ReciprocalName = recipName,
-                ReciprocalMagneticHeading = recipMagneticHeading
-            }).ToList();
+                MagneticHeading = magneticHeading
+            });
+            
+            runwayModels.Add(new RunwayModel
+            {
+                Name = recipName,
+                MagneticHeading = recipMagneticHeading
+            });
+        }
+
+        return runwayModels;
     }
 
     private static JsonElement[] GetChildElements(JsonElement parent)
