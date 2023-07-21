@@ -12,23 +12,19 @@ public class AirportDetailsModel
     {
         Dictionary<string, int> crosswindComponents = new();
 
-        if (Runways != null)
+        if (Runways == null) return;
+        foreach (RunwayModel runway in Runways)
         {
-            foreach (RunwayModel runway in Runways)
-            {
-                if (runway.MagneticHeading != null)
-                {
-                    int crosswindComponent = int.Abs((int)(runway.MagneticHeading - windDirection));
-                    if (runway.Name != null) crosswindComponents.Add(runway.Name, crosswindComponent);
-                }
-            }
+            if (runway.MagneticHeading == null) continue;
+            var crosswindComponent = int.Abs((int)(runway.MagneticHeading - windDirection));
+            if (runway.Name != null) crosswindComponents.Add(runway.Name, crosswindComponent);
+        }
 
-            string? bestRunway = crosswindComponents.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
+        string? bestRunway = crosswindComponents.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
 
-            foreach (RunwayModel runway in Runways)
-            {
-                if (runway.Name == bestRunway) runway.IsBestRunway = true;
-            }
+        foreach (var runway in Runways.Where(runway => runway.Name == bestRunway))
+        {
+            runway.IsBestRunway = true;
         }
     }
 }
