@@ -22,14 +22,21 @@ public class AirportReportService : IAirportReportService
         AirportWeatherModel airportWeatherModel = await GetAirportWeatherById(id);
         AirportDetailsModel airportDetailsModel = await GetAirportDetailsById(id);
         
+        return GetAirportDto(airportWeatherModel, airportDetailsModel);
+    }
+
+    private AirportDto GetAirportDto(AirportWeatherModel airportWeatherModel,
+        AirportDetailsModel airportDetailsModel)
+    {
         AirportDto airportDto = _mapper.Map<AirportDto>(airportDetailsModel);
         airportDto = _mapper.Map(airportWeatherModel, airportDto);
+
         return airportDto;
     }
 
-    private JsonElement GetRootElement(string data)
+    private static JsonElement GetRootElement(string data)
     {
-        JsonDocument jsonDocument = JsonDocument.Parse(data);
+        var jsonDocument = JsonDocument.Parse(data);
         JsonElement rootElement = jsonDocument.RootElement;
 
         return rootElement;
@@ -62,12 +69,12 @@ public class AirportReportService : IAirportReportService
         
         return new AirportWeatherModel
         {
-            Temperature = tempC.ToString(CultureInfo.InvariantCulture),
-            RelativeHumidity = relativeHumidityPercent.ToString(CultureInfo.InvariantCulture),
+            TemperatureF = tempC,
+            RelativeHumidityPercentage = relativeHumidityPercent,
             CloudCoverage = cloudCoverage,
-            Visibility = visibilitySm.ToString(CultureInfo.InvariantCulture),
-            WindSpeed = windSpeedMph.ToString(CultureInfo.InvariantCulture),
-            WindDirection = windDirectionMagnetic.ToString(CultureInfo.InvariantCulture)
+            VisibilitySm = visibilitySm,
+            WindSpeedMph = windSpeedMph,
+            WindDirectionDegrees = windDirectionMagnetic
         };
     }
     

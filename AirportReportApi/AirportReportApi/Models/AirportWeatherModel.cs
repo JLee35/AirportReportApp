@@ -2,10 +2,10 @@ namespace AirportReportApi.Core.Models;
 
 public record AirportWeatherModel
 {
-    public string? Temperature { get; init; }
-    public string? RelativeHumidity { get; init; }
+    public decimal TemperatureF { get; init; }
+    public int RelativeHumidityPercentage { get; init; }
     public string? CloudCoverage { get; init; }
-    public string? Visibility { get; init; }
-    public string? WindSpeed { get; init; }
-    public string? WindDirection { get; init; }
+    public decimal VisibilitySm { get; init; }
+    public decimal WindSpeedMph { get; init; }
+    public int WindDirectionDegrees { get; init; }
 }

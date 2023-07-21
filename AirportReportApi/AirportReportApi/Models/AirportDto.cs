@@ -2,14 +2,14 @@ namespace AirportReportApi.Core.Models;
 
 public record AirportDto
 {
-    public string? Identifier { get; init; }
+    public string? Identifier { get; set; }
     public string? Name { get; init; }
-    public string? TemperatureInF { get; init; }
-    public string? RelativeHumidity { get; init; }
+    public decimal TemperatureInF { get; set; }
+    public decimal RelativeHumidity { get; set; }
     public string? CloudCoverage { get; init; }
-    public string? VisibilitySm { get; init; }
-    public string? WindSpeedMph { get; init; }
-    public string? WindDirection { get; init; }
+    public decimal VisibilitySm { get; set; }
+    public decimal WindSpeedMph { get; set; }
+    public string? WindDirection { get; set; }
     public string? Latitude { get; init; }
     public string? Longitude { get; init; }
     public List<RunwayModel>? Runways { get; init; }

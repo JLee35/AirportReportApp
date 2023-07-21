@@ -8,12 +8,12 @@ public class AirportProfile : Profile
     public AirportProfile()
     {
         CreateMap<AirportWeatherModel, AirportDto>()
-            .ForMember(dest => dest.TemperatureInF, opt => opt.MapFrom(src => src.Temperature))
-            .ForMember(dest => dest.RelativeHumidity, opt => opt.MapFrom(src => src.RelativeHumidity))
+            .ForMember(dest => dest.TemperatureInF, opt => opt.MapFrom(src => $"{(src.TemperatureF * 9 / 5) + 32}"))
+            .ForMember(dest => dest.RelativeHumidity, opt => opt.MapFrom(src => src.RelativeHumidityPercentage))
             .ForMember(dest => dest.CloudCoverage, opt => opt.MapFrom(src => src.CloudCoverage))
-            .ForMember(dest => dest.VisibilitySm, opt => opt.MapFrom(src => src.Visibility))
-            .ForMember(dest => dest.WindSpeedMph, opt => opt.MapFrom(src => src.WindSpeed))
-            .ForMember(dest => dest.WindDirection, opt => opt.MapFrom(src => src.WindDirection));
+            .ForMember(dest => dest.VisibilitySm, opt => opt.MapFrom(src => src.VisibilitySm))
+            .ForMember(dest => dest.WindSpeedMph, opt => opt.MapFrom(src => src.WindSpeedMph))
+            .ForMember(dest => dest.WindDirection, opt => opt.MapFrom(src => GetCardinalDirection(src.WindDirectionDegrees)));
         
         CreateMap<AirportDetailsModel, AirportDto>()
             .ForMember(dest => dest.Identifier, opt => opt.MapFrom(src => src.Identifier))
@@ -21,5 +21,21 @@ public class AirportProfile : Profile
             .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Latitude))
             .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Longitude))
             .ForMember(dest => dest.Runways, opt => opt.MapFrom(src => src.Runways));
+    }
+    
+    private static string GetCardinalDirection(int direction)
+    {
+        return direction switch
+        {
+            0 or 360 => "N",
+            90 => "E",
+            180 => "S",
+            270 => "W",
+            > 0 and < 90 => "NE",
+            > 90 and < 180 => "SE",
+            > 180 and < 270 => "SW",
+            > 270 and < 360 => "NW",
+            _ => "N/A"
+        };
     }
 }
