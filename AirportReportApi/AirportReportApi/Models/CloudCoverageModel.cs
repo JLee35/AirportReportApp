@@ -11,7 +11,7 @@ public class CloudCoverageModel
             // This shouldn't happen, because the API should
             // return 'clr' at 0 ft if there are no clouds.
             // Leaving this here just in case.
-            return "Clear";
+            return "Sky clear";
         }
         
         var lowestCloud = FindLowestAltitudeWithGreatestCoverage();
@@ -22,7 +22,7 @@ public class CloudCoverageModel
     {
         var coverage = cloud.Coverage.ToString().ToLower();
 
-        var summary = $"Skies {coverage}";
+        var summary = $"Sky {coverage}";
         var altitude = (int)cloud.AltitudeFeet;
         if (altitude > 0)
         {

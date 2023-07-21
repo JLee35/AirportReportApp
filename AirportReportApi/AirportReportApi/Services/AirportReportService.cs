@@ -60,13 +60,16 @@ public class AirportReportService : IAirportReportService
         var windDirectionMagnetic = parentElement.GetProperty("wind").GetProperty("direction").GetInt16();
         var cloudCoverage = GetCloudCoverage(parentElement.GetProperty("cloudLayers"));
         
+        // Convert tempC to tempF.
+        var tempF = tempC * 9 / 5 + 32;
+
         return new AirportWeatherModel
         {
-            Temperature = tempC.ToString(CultureInfo.InvariantCulture),
-            RelativeHumidity = relativeHumidityPercent.ToString(CultureInfo.InvariantCulture),
+            Temperature = tempF.ToString(CultureInfo.InvariantCulture) + "°F",
+            RelativeHumidity = relativeHumidityPercent.ToString(CultureInfo.InvariantCulture) + "%",
             CloudCoverage = cloudCoverage,
-            Visibility = visibilitySm.ToString(CultureInfo.InvariantCulture),
-            WindSpeed = windSpeedMph.ToString(CultureInfo.InvariantCulture),
+            Visibility = visibilitySm.ToString(CultureInfo.InvariantCulture) + " SM",
+            WindSpeed = windSpeedMph == 0 ? "Calm" : windSpeedMph.ToString(CultureInfo.InvariantCulture) + " MPH",
             WindDirection = windDirectionMagnetic.ToString(CultureInfo.InvariantCulture)
         };
     }
