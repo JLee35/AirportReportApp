@@ -22,9 +22,17 @@ public class AirportReportService : IAirportReportService
         _mapper = mapper;
         _logger = logger;
     }
-
+    
+    /// <summary>
+    /// Given an airport identifier (ICAO), return a DTO containing
+    /// airport and weather information.
+    /// </summary>
+    /// <param name="id">string</param>
+    /// <returns>AirportDto</returns>
     public async Task<AirportDto> GetAirportReportById(string id)
     {
+        _logger.LogInformation("GetAirportReportById called with id: {id}", id);
+        
         AirportWeatherModel airportWeatherModel = await GetAirportWeatherById(id);
         AirportDetailsModel airportDetailsModel = await GetAirportDetailsById(id);
         
@@ -60,6 +68,8 @@ public class AirportReportService : IAirportReportService
     
     private async Task<AirportWeatherModel> GetAirportWeatherById(string id)
     {
+        _logger.LogInformation("GetAirportWeatherById called with id: {id}", id);
+        
         AirportWeatherModel weatherModel = new();
         JsonElement conditionsElement, forecastConditionsElement, forecastPeriodElement;
         
@@ -85,12 +95,13 @@ public class AirportReportService : IAirportReportService
         
         // Get time offset.
         weatherModel.WeatherForecast.TimeOffset = GetForecastTimeOffset(forecastPeriodElement);
-
+        
+        _logger.LogInformation("GetAirportWeatherById returning weatherModel: {weatherModel}", weatherModel);
         return weatherModel;
     }
 
     private AirportWeatherModel MapCurrentAirportWeather(JsonElement conditionsElement)
-    {
+    {   
         var weatherModel = new AirportWeatherModel();
         weatherModel = AddTempVisibilityAndHumidity(conditionsElement, weatherModel);
         weatherModel = AddWind(conditionsElement, weatherModel);
@@ -217,11 +228,11 @@ public class AirportReportService : IAirportReportService
         return windForecastModels;
     }
 
-    private static string GetForecastTimeOffset(JsonElement forecastPeriodElement)
+    private string GetForecastTimeOffset(JsonElement forecastPeriodElement)
     {
         var dateStart = forecastPeriodElement.GetProperty("dateStart").GetString();
         
-        // In a production environment, we should log this.
+        _logger.LogWarning("dateStart was found to be null in GetForecastTimeOffset");
         if (dateStart is null) return string.Empty;
         
         var start = DateTimeOffset.Parse(dateStart).UtcDateTime;
@@ -244,7 +255,6 @@ public class AirportReportService : IAirportReportService
         var longitude = rootElement.GetProperty("longitude").GetDecimal().ToString(CultureInfo.InvariantCulture);
 
         JsonElement runways = rootElement.GetProperty("runways");
-        
         List<RunwayModel> runwayModels = MapRunways(runways);
         
         return new AirportDetailsModel

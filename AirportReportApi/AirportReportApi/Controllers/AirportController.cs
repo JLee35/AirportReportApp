@@ -10,8 +10,6 @@ public class AirportController : ControllerBase
 {
     
     private readonly IAirportReportService _service;
-    
-    // TODO: Setup logging.
     private readonly ILogger<AirportController> _logger;
     
     public AirportController(IAirportReportService service, ILogger<AirportController> logger)
@@ -23,8 +21,10 @@ public class AirportController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAirportById(string id)
     {
+        _logger.LogInformation("GetAirportById called with id: {id}", id);
         AirportDto dto = await _service.GetAirportReportById(id);
-
+        
+        _logger.LogInformation("GetAirportById returning dto: {dto}", dto);
         return Ok(dto);
     }
 }

@@ -1,6 +1,4 @@
-﻿using AirportReportApi.Core.Data;
-using AirportReportApi.Core.Models;
-
+﻿
 namespace ApiReportApi.Tests;
 
 public class AirportReportRepositoryTests
