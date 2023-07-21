@@ -12,10 +12,12 @@ public class AirportProfile : Profile
             .ForMember(dest => dest.RelativeHumidity, opt => opt.MapFrom(src => src.RelativeHumidityPercentage))
             .ForMember(dest => dest.CloudCoverage, opt => opt.MapFrom(src => src.CloudCoverage))
             .ForMember(dest => dest.VisibilitySm, opt => opt.MapFrom(src => src.VisibilitySm))
+            .ForMember(dest => dest.WeatherForecast, opt => opt.MapFrom(src => src.WeatherForecast))
+            // TODO: Convert wind speed from knots to miles per hour.
             .ForMember(dest => dest.WindSpeedMph, opt => opt.MapFrom(src => src.WindSpeedKts))
-            .ForMember(dest => dest.ForecastTimeOffset, opt => opt.MapFrom(src => src.TimeOffset))
+            
             .ForMember(dest => dest.WindDirection,
-                opt => opt.MapFrom(src => GetCardinalDirection(src.WindDirectionDegrees)));
+                opt => opt.MapFrom(src => GetCardinalDirection(src.WindDirectionDegrees, src.IsWindVariable)));
             
         
         CreateMap<AirportDetailsModel, AirportDto>()
@@ -26,8 +28,10 @@ public class AirportProfile : Profile
             .ForMember(dest => dest.Runways, opt => opt.MapFrom(src => src.Runways));
     }
     
-    private static string GetCardinalDirection(int direction)
+    private static string GetCardinalDirection(int direction, bool isWindVariable)
     {
+        if (isWindVariable) return "Variable";
+        
         return direction switch
         {
             0 or 360 => "N",

@@ -12,7 +12,7 @@ public record AirportDto
     public string? WindDirection { get; set; }
     public string? Latitude { get; init; }
     public string? Longitude { get; init; }
-    public string? ForecastTimeOffset { get; set; }
+    public WeatherForecastModel? WeatherForecast { get; set; }
     public List<RunwayModel>? Runways { get; init; }
     
 }

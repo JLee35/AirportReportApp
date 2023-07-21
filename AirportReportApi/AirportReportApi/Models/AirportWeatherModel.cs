@@ -2,16 +2,12 @@ namespace AirportReportApi.Core.Models;
 
 public record AirportWeatherModel
 {
-    public decimal TemperatureF { get; init; }
-    public int RelativeHumidityPercentage { get; init; }
-    public string? CloudCoverage { get; init; }
-    public decimal VisibilitySm { get; init; }
-    public decimal WindSpeedKts { get; init; }
-    public int WindDirectionDegrees { get; init; }
-    public string? TimeOffset { get; set; }
-    
-    // According to the specs, we should have at least two forecasts
-    // coming from the API. But I found some airports may only have
-    // one (KSFF for example).
-    public List<WeatherForecastModel>? WeatherForecasts { get; set; }
+    public decimal TemperatureF { get; set; }
+    public int RelativeHumidityPercentage { get; set; }
+    public string? CloudCoverage { get; set; }
+    public decimal VisibilitySm { get; set; }
+    public decimal WindSpeedKts { get; set; }
+    public bool IsWindVariable { get; set; }
+    public int WindDirectionDegrees { get; set; }
+    public WeatherForecastModel? WeatherForecast { get; set; }
 }

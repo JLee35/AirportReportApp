@@ -2,6 +2,7 @@ namespace AirportReportApi.Core.Models;
 
 public record WeatherForecastModel
 {
-    public decimal WindSpeedKts { get; init; }
-    public int WindDirectionDegrees { get; init; }
+    public string? TimeOffset { get; set; }
+    
+    public List<WindForecastModel>? WindForecasts { get; set; }
 }

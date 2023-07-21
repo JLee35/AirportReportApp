@@ -10,6 +10,8 @@ public class AirportReportService : IAirportReportService
 {
     private readonly IAirportRepository _airportRepository;
     private readonly IMapper _mapper;
+
+    private delegate AirportWeatherModel WeatherCollectionDelegate(AirportWeatherModel weatherModel, JsonElement parentElement);
     
     public AirportReportService(IAirportRepository airportRepository, IMapper mapper)
     {
@@ -51,7 +53,19 @@ public class AirportReportService : IAirportReportService
     
     private async Task<AirportWeatherModel> GetAirportWeatherById(string id)
     {
-        string weather = await _airportRepository.GetAirportWeatherById(id);
+        AirportWeatherModel weatherModel = new();
+        string weather;
+
+        try
+        {
+            weather = await _airportRepository.GetAirportWeatherById(id);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return weatherModel;
+        }
+        
         JsonElement rootElement = GetRootElement(weather);
         JsonElement reportElement = rootElement.GetProperty("report");
         JsonElement conditionsElement = reportElement.GetProperty("conditions");
@@ -59,53 +73,143 @@ public class AirportReportService : IAirportReportService
         JsonElement forecastConditionsElement = forecastElement.GetProperty("conditions");
         JsonElement forecastPeriodElement = forecastElement.GetProperty("period");
         
-        AirportWeatherModel weatherModel = MapCurrentAirportWeather(conditionsElement);
-        var weatherForecasts = GetWeatherForecasts(forecastConditionsElement);
-        weatherModel.WeatherForecasts = weatherForecasts;
+        weatherModel = MapCurrentAirportWeather(conditionsElement);
+        var weatherForecast = GetWeatherForecast(forecastConditionsElement);
+        weatherModel.WeatherForecast = weatherForecast;
         
         // Get time offset.
-        weatherModel.TimeOffset = GetForecastTimeOffset(forecastPeriodElement);
+        weatherModel.WeatherForecast.TimeOffset = GetForecastTimeOffset(forecastPeriodElement);
 
         return weatherModel;
     }
 
     private AirportWeatherModel MapCurrentAirportWeather(JsonElement conditionsElement)
     {
-        var tempC = conditionsElement.GetProperty("tempC").GetDecimal();
-        var relativeHumidityPercent = conditionsElement.GetProperty("relativeHumidity").GetInt16();
-        var visibilitySm = conditionsElement.GetProperty("visibility").GetProperty("distanceSm").GetDecimal();
-        var windSpeedMph = conditionsElement.GetProperty("wind").GetProperty("speedKts").GetDecimal();
-        var windDirectionMagnetic = conditionsElement.GetProperty("wind").GetProperty("direction").GetInt16();
-        var cloudCoverage = GetCloudCoverage(conditionsElement.GetProperty("cloudLayers"));
+        var weatherModel = new AirportWeatherModel();
+        weatherModel = AddTempVisibilityAndHumidity(conditionsElement, weatherModel);
+        weatherModel = AddWind(conditionsElement, weatherModel);
+        weatherModel = AddClouds(conditionsElement, weatherModel);
         
-        return new AirportWeatherModel
-        {
-            TemperatureF = tempC,
-            RelativeHumidityPercentage = relativeHumidityPercent,
-            CloudCoverage = cloudCoverage,
-            VisibilitySm = visibilitySm,
-            WindSpeedKts = windSpeedMph,
-            WindDirectionDegrees = windDirectionMagnetic
-        };
+        return weatherModel;
     }
-    
-    private static List<WeatherForecastModel> GetWeatherForecasts(JsonElement forecastConditionsElement)
+
+    private static AirportWeatherModel AddTempVisibilityAndHumidity(JsonElement conditionsElement,
+        AirportWeatherModel weatherModel)
     {
-        List<WeatherForecastModel> weatherForecastModels = new();
-        var conditions = GetChildElements(forecastConditionsElement);
-        foreach (var condition in conditions)
+        weatherModel = GetWeatherByCategory((weather, conditions) =>
         {
-            var windSpeedKts = condition.GetProperty("wind").GetProperty("speedKts").GetDecimal();
-            var windDirectionDegrees = condition.GetProperty("wind").GetProperty("direction").GetInt16();
+            var tempC = conditions.GetProperty("tempC").GetDecimal();
+            var relativeHumidityPercent = conditions.GetProperty("relativeHumidity").GetInt16();
+            var visibilitySm = conditions.GetProperty("visibility").GetProperty("distanceSm").GetDecimal();
+
+            weather.TemperatureF = tempC;
+            weather.RelativeHumidityPercentage = relativeHumidityPercent;
+            weather.VisibilitySm = visibilitySm;
+
+            return weather;
+        }, weatherModel, conditionsElement);
+
+        return weatherModel;
+    }
+
+    private static AirportWeatherModel AddWind(JsonElement conditionsElement, AirportWeatherModel weatherModel)
+    {
+        weatherModel = GetWeatherByCategory((weather, conditions) =>
+        {
+            JsonElement windElement = conditions.GetProperty("wind");
+            var windSpeedMph = windElement.GetProperty("speedKts").GetDecimal();
+            bool isWindVariable = windElement.GetProperty("variable").GetBoolean();
             
-            weatherForecastModels.Add(new WeatherForecastModel
+            weather.WindSpeedKts = windSpeedMph;
+            weather.IsWindVariable = isWindVariable;
+
+            if (!isWindVariable)
             {
-                WindSpeedKts = windSpeedKts,
-                WindDirectionDegrees = windDirectionDegrees
-            });
+                var windDirectionDegrees = windElement.GetProperty("direction").GetInt16();
+                weather.WindDirectionDegrees = windDirectionDegrees;
+            }
+            
+            return weather;
+        }, weatherModel, conditionsElement);
+
+        return weatherModel;
+    }
+
+    private static AirportWeatherModel AddClouds(JsonElement conditionsElement,
+        AirportWeatherModel weatherModel)
+    {
+        weatherModel = GetWeatherByCategory((weather, conditions) =>
+        {
+            var cloudCoverage = GetCloudCoverage(conditions.GetProperty("cloudLayers"));
+            weather.CloudCoverage = cloudCoverage;
+
+            return weather;
+        }, weatherModel, conditionsElement);
+
+        return weatherModel;
+    }
+
+    private static AirportWeatherModel GetWeatherByCategory(
+        WeatherCollectionDelegate collectionDelegate, 
+        AirportWeatherModel weatherModel, JsonElement parentElement)
+    {
+        try
+        {
+            weatherModel = collectionDelegate(weatherModel, parentElement);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            Console.WriteLine($"Exception occurred while gathering weather: {ex.Message}");
         }
 
-        return weatherForecastModels;
+        return weatherModel;
+    }
+    
+    private static WeatherForecastModel GetWeatherForecast(JsonElement forecastConditionsElement)
+    {
+        WeatherForecastModel weatherForecastModel = new()
+        {
+            WindForecasts = GetWindForecastModels(forecastConditionsElement)
+        };
+        return weatherForecastModel;
+    }
+
+    private static List<WindForecastModel> GetWindForecastModels(JsonElement conditionsElement)
+    {
+        List<WindForecastModel> windForecastModels = new();
+        var conditions = GetChildElements(conditionsElement);
+        
+        // According to specs, we only need the first two forecasts if available.
+        for (int forecastCount = 0; forecastCount < 2; forecastCount++)
+        {
+            try
+            {
+                JsonElement windElement = conditions[forecastCount].GetProperty("wind");
+                decimal windSpeedKts = windElement.GetProperty("speedKts").GetDecimal();
+                bool isWindVariable = windElement.GetProperty("variable").GetBoolean();
+
+                var windForecastModel = new WindForecastModel
+                {
+                    WindSpeedKts = windSpeedKts,
+                    IsWindVariable = isWindVariable
+                };
+
+                if (isWindVariable) continue;
+                short windDirectionDegrees = windElement.GetProperty("direction").GetInt16();
+                windForecastModel.WindDirectionDegrees = windDirectionDegrees;
+
+                windForecastModels.Add(windForecastModel);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                // TODO: Log exception with Logger.
+                Console.WriteLine($"Exception raised: {ex.Message}");
+            }
+
+            return windForecastModels;
+        }
+
+        return windForecastModels;
     }
 
     private static string GetForecastTimeOffset(JsonElement forecastPeriodElement)
