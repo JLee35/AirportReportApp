@@ -107,7 +107,7 @@ public class AirportReportService : IAirportReportService
             
             cloudModels.Add(new CloudModel
             {
-                Coverage = coverage,
+                Coverage = CloudModel.CoverageMap[coverage],
                 AltitudeFeet = altitudeFt,
                 IsCeiling = isCeiling
             });
