@@ -1,8 +1,9 @@
 using System.Globalization;
-using AirportReportApi.Core.Data;
 using AutoMapper;
 using System.Text.Json;
+using AirportReportApi.Core.Enums;
 using AirportReportApi.Core.Models;
+using AirportReportApi.Core.Repositories;
 
 namespace AirportReportApi.Core.Services;
 
@@ -46,7 +47,7 @@ public class AirportReportService : IAirportReportService
 
     private async Task<AirportDetailsModel> GetAirportDetailsById(string id)
     {
-        string details = await _airportRepository.GetAirportDetailsById(id);
+        string details = await _airportRepository.GetAirportInformationById(id, ReportType.Details);
         JsonElement detailsRootElement = GetRootElement(details);
         return MapAirportDetails(detailsRootElement);
     }
@@ -58,7 +59,7 @@ public class AirportReportService : IAirportReportService
 
         try
         {
-            weather = await _airportRepository.GetAirportWeatherById(id);
+            weather = await _airportRepository.GetAirportInformationById(id, ReportType.Weather);
         }
         catch (Exception ex)
         {

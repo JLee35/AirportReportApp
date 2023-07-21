@@ -1,5 +1,4 @@
 ﻿using AirportReportApi.Core.Configurations;
-using AirportReportApi.Core.Data;
 using AirportReportApi.Core.Repositories;
 using AirportReportApi.Core.Services;
 using Microsoft.Extensions.Options;

@@ -1,4 +1,5 @@
-using AirportReportApi.Core.Data;
+using System.Net;
+using AirportReportApi.Core.Enums;
 using AirportReportApi.Core.Services;
 
 namespace AirportReportApi.Core.Repositories;
@@ -11,51 +12,37 @@ public class AirportRepository : IAirportRepository
         _httpClientService = clientService;
     }
 
-    public async Task<string> GetAirportDetailsById(string id)
+    public async Task<string> GetAirportInformationById(string id, ReportType reportType)
     {
+        var requestException = new HttpRequestException("A problem occurred while retrieving airport information.");
+        HttpClient client = 
+            reportType == ReportType.Details ? _httpClientService.GetDetailsClient() : _httpClientService.GetWeatherClient();
+        
         try
         {
-            HttpClient detailsClient = _httpClientService.GetDetailsClient();
-            string requestUrl = detailsClient.BaseAddress + id;
+            string requestUrl = client.BaseAddress + id;
 
-            HttpResponseMessage response = await detailsClient.GetAsync(requestUrl);
+            HttpResponseMessage response = await client.GetAsync(requestUrl);
 
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadAsStringAsync();
             }
-
-            return await Task.FromResult("Problem!");
-        }
-        catch (HttpRequestException ex)
-        {
-            // TODO: Log exception.
-            Console.WriteLine(ex);
-            return await Task.FromResult("Problem!");
-        }
-    }
-
-    public async Task<string> GetAirportWeatherById(string id)
-    {
-        try
-        {
-            HttpClient weatherClient = _httpClientService.GetWeatherClient();
-            string requestUrl = weatherClient.BaseAddress + id;
-            
-            HttpResponseMessage response = await weatherClient.GetAsync(requestUrl);
-
-            if (response.IsSuccessStatusCode)
+            switch (response.StatusCode)
             {
-                return await response.Content.ReadAsStringAsync();
+                case HttpStatusCode.NotFound:
+                    throw new HttpRequestException("Airport not found.");
+                case HttpStatusCode.BadRequest:
+                    throw new BadHttpRequestException("Bad request.");
             }
-
-            return await Task.FromResult("Problem!");
-        } 
+        }
         catch (HttpRequestException ex)
         {
             // TODO: Log exception.
             Console.WriteLine(ex);
-            return await Task.FromResult("Problem!");
+            throw requestException;
         }
+
+        throw requestException;
     }
 }

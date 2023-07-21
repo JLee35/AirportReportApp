@@ -1,9 +1,8 @@
-using AirportReportApi.Core.Models;
+using AirportReportApi.Core.Enums;
 
-namespace AirportReportApi.Core.Data;
+namespace AirportReportApi.Core.Repositories;
 
 public interface IAirportRepository
 {
-    public Task<string> GetAirportDetailsById(string id);
-    public Task<string> GetAirportWeatherById(string id);
+    public Task<string> GetAirportInformationById(string id, ReportType reportType);
 }
