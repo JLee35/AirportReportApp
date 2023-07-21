@@ -8,7 +8,6 @@ namespace AirportReportApi.Core.Controllers;
 [Route("[controller]")]
 public class AirportController : ControllerBase
 {
-    
     private readonly IAirportReportService _service;
     private readonly ILogger<AirportController> _logger;
     
@@ -17,7 +16,13 @@ public class AirportController : ControllerBase
         _service = service;
         _logger = logger;
     }
-
+    
+    /// <summary>
+    /// Given an airport id (ICAO), returns airport details such as name, location,
+    /// runways, weather, etc.
+    /// </summary>
+    /// <param name="id">String</param>
+    /// <returns>AirportDto</returns>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAirportById(string id)
     {
@@ -34,7 +39,13 @@ public class AirportController : ControllerBase
         _logger.LogInformation("GetAirportById returning dto: {Dto}", dto);
         return Ok(dto);
     }
-
+    
+    /// <summary>
+    /// Given a list of airport ids (ICAO), returns a list of airport details such as name,
+    /// location, runways, weather, etc.
+    /// </summary>
+    /// <param name="ids">String List></param>
+    /// <returns>AirportDto List</returns>
     [HttpPost("multiple")]
     public async Task<IActionResult> GetAirportsByIds([FromBody] List<string> ids)
     {
