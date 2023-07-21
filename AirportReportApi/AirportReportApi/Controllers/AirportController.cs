@@ -22,7 +22,13 @@ public class AirportController : ControllerBase
     public async Task<IActionResult> GetAirportById(string id)
     {
         _logger.LogInformation("GetAirportById called with id: {id}", id);
-        AirportDto dto = await _service.GetAirportReportById(id);
+        AirportDto? dto = await _service.GetAirportReportById(id);
+        
+        if (dto == null)
+        {
+            _logger.LogInformation("GetAirportById did not find an airport with id: {id}", id);
+            return NotFound();
+        }
         
         _logger.LogInformation("GetAirportById returning dto: {dto}", dto);
         return Ok(dto);
