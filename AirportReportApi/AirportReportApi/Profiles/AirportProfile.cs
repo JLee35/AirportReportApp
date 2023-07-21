@@ -8,15 +8,13 @@ public class AirportProfile : Profile
     public AirportProfile()
     {
         CreateMap<AirportWeatherModel, AirportDto>()
-            .ForMember(dest => dest.TemperatureInF, opt => opt.MapFrom(src => $"{(src.TemperatureF * 9 / 5) + 32}"))
-            .ForMember(dest => dest.RelativeHumidity, opt => opt.MapFrom(src => src.RelativeHumidityPercentage))
-            .ForMember(dest => dest.CloudCoverage, opt => opt.MapFrom(src => src.CloudCoverage))
-            .ForMember(dest => dest.VisibilitySm, opt => opt.MapFrom(src => src.VisibilitySm))
-            .ForMember(dest => dest.WeatherForecast, opt => opt.MapFrom(src => src.WeatherForecast))
-            // TODO: Convert wind speed from knots to miles per hour.
-            .ForMember(dest => dest.WindSpeedMph, opt => opt.MapFrom(src => src.WindSpeedKts))
-            
-            .ForMember(dest => dest.WindDirection,
+            .ForPath(dest => dest.Weather.TemperatureInF, opt => opt.MapFrom(src => $"{(src.TemperatureF * 9 / 5) + 32}"))
+            .ForPath(dest => dest.Weather.RelativeHumidity, opt => opt.MapFrom(src => src.RelativeHumidityPercentage))
+            .ForPath(dest => dest.Weather.CloudCoverage, opt => opt.MapFrom(src => src.CloudCoverage))
+            .ForPath(dest => dest.Weather.VisibilitySm, opt => opt.MapFrom(src => src.VisibilitySm))
+            .ForPath(dest => dest.Weather.WeatherForecast, opt => opt.MapFrom(src => src.WeatherForecast))
+            .ForPath(dest => dest.Weather.WindSpeedMph, opt => opt.MapFrom(src => $"{src.WindSpeedKts * (decimal)1.15078}"))
+            .ForPath(dest => dest.Weather.WindDirection,
                 opt => opt.MapFrom(src => GetCardinalDirection(src.WindDirectionDegrees, src.IsWindVariable)));
             
         
