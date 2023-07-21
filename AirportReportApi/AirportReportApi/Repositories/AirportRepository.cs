@@ -31,8 +31,10 @@ public class AirportRepository : IAirportRepository
                 throw new HttpRequestException($"Airport with identifier {id} could not be found.", null, HttpStatusCode.NotFound);
             case HttpStatusCode.BadRequest:
                 throw new BadHttpRequestException("Bad request.");
+            case HttpStatusCode.Unauthorized:
+                throw new HttpRequestException("Access denied.", null, HttpStatusCode.Unauthorized);
         }
         
-        throw new HttpRequestException("A problem occurred while retrieving airport information.");
+        throw new HttpRequestException("A problem occurred while retrieving airport information.", null, HttpStatusCode.InternalServerError);
     }
 }
