@@ -14,35 +14,25 @@ public class AirportRepository : IAirportRepository
 
     public async Task<string> GetAirportInformationById(string id, ReportType reportType)
     {
-        var requestException = new HttpRequestException("A problem occurred while retrieving airport information.");
         HttpClient client = 
             reportType == ReportType.Details ? _httpClientService.GetDetailsClient() : _httpClientService.GetWeatherClient();
         
-        try
+        string requestUrl = client.BaseAddress + id;
+
+        HttpResponseMessage response = await client.GetAsync(requestUrl);
+
+        if (response.IsSuccessStatusCode)
         {
-            string requestUrl = client.BaseAddress + id;
-
-            HttpResponseMessage response = await client.GetAsync(requestUrl);
-
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadAsStringAsync();
-            }
-            switch (response.StatusCode)
-            {
-                case HttpStatusCode.NotFound:
-                    throw new HttpRequestException("Airport not found.");
-                case HttpStatusCode.BadRequest:
-                    throw new BadHttpRequestException("Bad request.");
-            }
+            return await response.Content.ReadAsStringAsync();
         }
-        catch (HttpRequestException ex)
+        switch (response.StatusCode)
         {
-            // TODO: Log exception.
-            Console.WriteLine(ex);
-            throw requestException;
+            case HttpStatusCode.NotFound:
+                throw new HttpRequestException($"Airport with identifier {id} could not be found.", null, HttpStatusCode.NotFound);
+            case HttpStatusCode.BadRequest:
+                throw new BadHttpRequestException("Bad request.");
         }
-
-        throw requestException;
+        
+        throw new HttpRequestException("A problem occurred while retrieving airport information.");
     }
 }
