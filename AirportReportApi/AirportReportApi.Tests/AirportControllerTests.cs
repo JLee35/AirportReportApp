@@ -54,4 +54,62 @@ public class AirportControllerTests
         // Assert
         Assert.IsType<NotFoundResult>(result);
     }
+
+    [Fact]
+    public async Task GetAirportsByIds_ReturnsAirports_WhenAirportsExist()
+    {
+        // Arrange
+        var airportIds = new List<string> {"KGEG", "KSFO", "KSEA"};
+        var airportDtos = new List<AirportDto>
+        {
+            new()
+            {
+                Identifier = "KGEG",
+                Name = "Spokane International Airport",
+                // leaving the other fields null for brevity
+            },
+            new()
+            {
+                Identifier = "KSFO",
+                Name = "San Francisco International Airport",
+            },
+            new()
+            {
+                Identifier = "KSEA",
+                Name = "Seattle-Tacoma International Airport",
+            }
+        };
+        
+        var mockService = new Mock<IAirportReportService>();
+        mockService.Setup(s => s.GetAirportReportsByIds(airportIds)).ReturnsAsync(airportDtos);
+        
+        var mockLogger = new Mock<ILogger<AirportController>>();
+        var controller = new AirportController(mockService.Object, mockLogger.Object);
+        
+        // Act
+        var result = await controller.GetAirportsByIds(airportIds);
+        
+        // Assert
+        Assert.IsType<OkObjectResult>(result);
+        Assert.Equal(airportDtos, ((OkObjectResult) result).Value);
+    }
+    
+    [Fact]
+    public async Task GetAirportsByIds_ReturnsNotFound_WhenNoAirportsExist()
+    {
+        // Arrange
+        var airportIds = new List<string> {"NonExistentId1", "NonExistentId2"};
+        
+        var mockService = new Mock<IAirportReportService>();
+        mockService.Setup(s => s.GetAirportReportsByIds(airportIds)).ReturnsAsync(new List<AirportDto>());
+        
+        var mockLogger = new Mock<ILogger<AirportController>>();
+        var controller = new AirportController(mockService.Object, mockLogger.Object);
+        
+        // Act
+        var result = await controller.GetAirportsByIds(airportIds);
+        
+        // Assert
+        Assert.IsType<NotFoundObjectResult>(result);
+    }
 }
