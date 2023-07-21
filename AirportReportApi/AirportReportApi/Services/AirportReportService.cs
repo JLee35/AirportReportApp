@@ -57,10 +57,14 @@ public class AirportReportService : IAirportReportService
         JsonElement conditionsElement = reportElement.GetProperty("conditions");
         JsonElement forecastElement = reportElement.GetProperty("forecast");
         JsonElement forecastConditionsElement = forecastElement.GetProperty("conditions");
+        JsonElement forecastPeriodElement = forecastElement.GetProperty("period");
         
         AirportWeatherModel weatherModel = MapCurrentAirportWeather(conditionsElement);
         var weatherForecasts = GetWeatherForecasts(forecastConditionsElement);
         weatherModel.WeatherForecasts = weatherForecasts;
+        
+        // Get time offset.
+        weatherModel.TimeOffset = GetForecastTimeOffset(forecastPeriodElement);
 
         return weatherModel;
     }
@@ -85,10 +89,10 @@ public class AirportReportService : IAirportReportService
         };
     }
     
-    private static List<WeatherForecastModel> GetWeatherForecasts(JsonElement conditionsElement)
+    private static List<WeatherForecastModel> GetWeatherForecasts(JsonElement forecastConditionsElement)
     {
         List<WeatherForecastModel> weatherForecastModels = new();
-        var conditions = GetChildElements(conditionsElement);
+        var conditions = GetChildElements(forecastConditionsElement);
         foreach (var condition in conditions)
         {
             var windSpeedKts = condition.GetProperty("wind").GetProperty("speedKts").GetDecimal();
@@ -102,6 +106,22 @@ public class AirportReportService : IAirportReportService
         }
 
         return weatherForecastModels;
+    }
+
+    private static string GetForecastTimeOffset(JsonElement forecastPeriodElement)
+    {
+        var dateStart = forecastPeriodElement.GetProperty("dateStart").GetString();
+        
+        // In a production environment, we should log this.
+        if (dateStart is null) return string.Empty;
+        
+        var start = DateTimeOffset.Parse(dateStart).UtcDateTime;
+        var currentTime = DateTime.UtcNow;
+        var difference = currentTime - start;
+        
+        // Format difference into hrs:min.
+        string formattedDifference = difference.ToString("h\\h\\:mm\\m");
+        return formattedDifference;
     }
     
     private AirportDetailsModel MapAirportDetails(JsonElement rootElement)

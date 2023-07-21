@@ -8,7 +8,7 @@ public record AirportWeatherModel
     public decimal VisibilitySm { get; init; }
     public decimal WindSpeedKts { get; init; }
     public int WindDirectionDegrees { get; init; }
-    public string? TimeOffset { get; init; }
+    public string? TimeOffset { get; set; }
     
     // According to the specs, we should have at least two forecasts
     // coming from the API. But I found some airports may only have
