@@ -19,16 +19,10 @@ public class AirportController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetAirportById(string id)
+    public async Task<IActionResult> GetAirportById(string id)
     {
-        Task<string> details = _service.GetAirportReportById(id);
-        
-        if (details is null)
-        {
-            _logger.LogInformation("Airport details with id {Id} not found.", id);
-            return NotFound();
-        }
-        
+        string details = await _service.GetAirportReportById(id);
+
         return Ok(details);
     }
 }

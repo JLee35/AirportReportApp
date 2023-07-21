@@ -12,7 +12,7 @@ public class AirportRepository : IAirportRepository
 
     public async Task<string> GetAirportDetailsById(string id)
     {
-        return null;
+        return await Task.FromResult("Airport details");
     }
 
     public async Task<string> GetAirportWeatherById(string id)
@@ -30,13 +30,13 @@ public class AirportRepository : IAirportRepository
                 return await response.Content.ReadAsStringAsync();
             }
 
-            return null;
+            return await Task.FromResult("Problem!");
         } 
         catch (HttpRequestException ex)
         {
             // TODO: Log exception.
             Console.WriteLine(ex);
-            return null;
+            return await Task.FromResult("Problem!");
         }
     }
 }
