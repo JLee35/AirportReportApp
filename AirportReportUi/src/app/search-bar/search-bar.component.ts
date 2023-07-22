@@ -1,4 +1,6 @@
 import { Component, HostListener } from '@angular/core';
+import { AirportService } from '../airport.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-search-bar',
@@ -6,9 +8,13 @@ import { Component, HostListener } from '@angular/core';
   styleUrls: ['./search-bar.component.css'],
 })
 export class SearchBarComponent {
+
+  constructor(private airportService: AirportService, private router: Router) { }
+
   onGoButtonClick() {
     const searchTerm = (document.querySelector('input') as HTMLInputElement).value;
-    console.log(`Performing serach for: ${searchTerm}`);
+    this.airportService.setAirportId(searchTerm);
+    this.router.navigate(['/airports']);
   }
 
   @HostListener('document:keydown', ['$event'])

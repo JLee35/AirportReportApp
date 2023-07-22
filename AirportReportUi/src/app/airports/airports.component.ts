@@ -16,11 +16,17 @@ export class AirportsComponent implements OnInit {
 
   ngOnInit(): void {
     console.log("airport component ngOnInit");
-    this.getAirports();
+    // this.getAirports();
+    this.getAirport();
   }
 
   getAirports(): void {
     this.airportService.getAirports()
       .subscribe(airports => this.airports = airports);
+  }
+
+  getAirport(): void {
+    this.airportService.getAirport()
+      .subscribe(airport => this.airports.push(airport));
   }
 }
