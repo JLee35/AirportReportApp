@@ -7,18 +7,31 @@ import { LandingPageComponent } from './landing-page/landing-page.component';
 import { SearchBarComponent } from './search-bar/search-bar.component';
 import { MatButtonModule } from '@angular/material/button';
 import { HttpClientModule } from '@angular/common/http';
+import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
+import { InMemoryDataService } from './in-memory-data.service';
+import { AirportsComponent } from './airports/airports.component';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     LandingPageComponent,
-    SearchBarComponent
+    SearchBarComponent,
+    AirportsComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     MatButtonModule,
-    HttpClientModule
+    HttpClientModule,
+
+    // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
+    // and returns simulated server responses.
+    // Remove it when a real server is ready to receive requests.
+    HttpClientInMemoryWebApiModule.forRoot(
+      InMemoryDataService, { dataEncapsulation: false }
+    ),
+     AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]

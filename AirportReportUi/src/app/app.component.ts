@@ -6,5 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'AirportReportUi';
+  title = 'FlyWise';
+  subtitle = 'Smartly navigating you through airport information';
 }
