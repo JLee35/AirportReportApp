@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { InMemoryDbService } from 'angular-in-memory-web-api';
+import { Airport } from './airport'
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,6 @@ export class InMemoryDataService implements InMemoryDbService {
       { id: "KISP", name: "Long Island MacArthur Airport", latitude: "40.7953", longitude: "-73.1002" },
     ]
 
-    return airports;
+    return { airports };
   }
 }

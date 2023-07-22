@@ -7,7 +7,12 @@ import { Airport } from './airport';
   providedIn: 'root'
 })
 export class AirportService {
+
   private airportsUrl = "app/airports";
+  httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  };
+
   constructor(private http: HttpClient) { }
 
   getAirports(): Observable<Airport[]> {
