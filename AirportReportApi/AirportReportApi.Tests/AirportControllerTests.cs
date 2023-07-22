@@ -52,7 +52,7 @@ public class AirportControllerTests
         var result = await controller.GetAirportById(airportId);
         
         // Assert
-        Assert.IsType<NotFoundResult>(result);
+        Assert.IsType<NotFoundObjectResult>(result);
     }
 
     [Fact]

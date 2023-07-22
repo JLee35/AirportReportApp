@@ -259,25 +259,34 @@ public class AirportReportService : IAirportReportService
     
     private AirportDetailsModel MapAirportDetails(JsonElement rootElement)
     {
-        var icao = rootElement.GetProperty("icao").GetString();
-        var name = rootElement.GetProperty("name").GetString();
-        
-        // Not sure if culture invariance is necessary, but may help
-        // in situations where the API returns a decimal with a comma.
-        var latitude = rootElement.GetProperty("latitude").GetDecimal().ToString(CultureInfo.InvariantCulture);
-        var longitude = rootElement.GetProperty("longitude").GetDecimal().ToString(CultureInfo.InvariantCulture);
-
-        JsonElement runways = rootElement.GetProperty("runways");
-        List<RunwayModel> runwayModels = MapRunways(runways);
-        
-        return new AirportDetailsModel
+        try
         {
-            Identifier = icao,
-            Name = name,
-            Latitude = latitude,
-            Longitude = longitude,
-            Runways = runwayModels
-        };
+            var icao = rootElement.GetProperty("icao").GetString();
+            var name = rootElement.GetProperty("name").GetString();
+
+            // Not sure if culture invariance is necessary, but may help
+            // in situations where the API returns a decimal with a comma.
+            var latitude = rootElement.GetProperty("latitude").GetDecimal().ToString(CultureInfo.InvariantCulture);
+            var longitude = rootElement.GetProperty("longitude").GetDecimal().ToString(CultureInfo.InvariantCulture);
+
+            JsonElement runways = rootElement.GetProperty("runways");
+            List<RunwayModel> runwayModels = MapRunways(runways);
+
+            return new AirportDetailsModel
+            {
+                Identifier = icao,
+                Name = name,
+                Latitude = latitude,
+                Longitude = longitude,
+                Runways = runwayModels
+            };
+        }
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogError("Exception occurred while gathering airport details: {ExMessage}", ex.Message);
+        }
+
+        return new AirportDetailsModel();
     }
 
     private static string GetCloudCoverage(JsonElement clouds)

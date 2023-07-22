@@ -1,36 +1,60 @@
 ﻿
+using System.Net;
+using AirportReportApi.Core.Enums;
+using AirportReportApi.Core.Repositories;
+using AirportReportApi.Core.Services;
+using ApiReportApi.Tests.Mocks;
+using Microsoft.AspNetCore.Http;
+using Moq;
+
 namespace ApiReportApi.Tests;
 
 public class AirportReportRepositoryTests
 {
-
-    // private static readonly HttpClient HttpClient = new ();
-    // private static readonly AirportRepository Repository = new (HttpClient);
-        
+    
     [Fact]
-    public void GetAirportReportById_ExistingId_ReturnsAirportData()
+    public async Task GetAirportInformationById_ShouldReturnAirportDetails_WhenReportTypeIsDetails()
     {
         // Arrange
+        string validId = "KJFK";
+        ReportType reportType = ReportType.Details;
 
+        HttpResponseMessage successResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent("Mocked details json")
+        };
+        
+        MockHttpClientService mockClientService = new MockHttpClientService(successResponse);
+        AirportRepository airportRepository = new AirportRepository(mockClientService);
+        
         // Act
-        // AirportDetails details = Repository.GetAirportDetailsById("KJFK");
-        //
-        // // Assert
-        // Assert.Equal("KJFK", details.Identifier);
-        // Assert.Equal("John F. Kennedy International Airport", details.Name);
-        // Assert.Equal("4", details.AvailableRunways);
-        // Assert.Equal("40.6413° N, 73.7781° W", details.LatLong);
+        string result = await airportRepository.GetAirportInformationById(validId, reportType);
+        
+        // Assert
+        Assert.NotNull(result);
     }
 
     [Fact]
-    public void GetAirportWeatherReportById_ExistingId_ReturnsAirportWeatherData()
+    public async Task GetAirportInformationById_ShouldReturnAirportWeather_WhenReportTypeIsValid()
     {
-        // // Arrange
-        //
-        // // Act
-        // string weatherReport = Repository.GetAirportWeatherById("KJFK").Result;
-        //
-        // // Assert
-        // Assert.NotNull(weatherReport);
+        // Arrange
+        string validId = "KJFK";
+        ReportType reportType = ReportType.Weather;
+
+        HttpResponseMessage successResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent("Mocked details json")
+        };
+        
+        MockHttpClientService mockClientService = new MockHttpClientService(successResponse);
+        AirportRepository airportRepository = new AirportRepository(mockClientService);
+        
+        // Act
+        string result = await airportRepository.GetAirportInformationById(validId, reportType);
+        
+        // Assert
+        Assert.NotNull(result);
     }
 }
