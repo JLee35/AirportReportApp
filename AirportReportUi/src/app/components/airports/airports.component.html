@@ -1,6 +1,14 @@
 <div class="container">
     <div *ngFor="let airport of airports" class="jumbotron">
-      <h3 class="text-center">{{ airport.name }} ({{ airport.identifier }})</h3>
+        <div class="row d-flex">
+            <div class="col-md-8 flex-fill">
+                <h3 class="text-center">{{ airport.name }} ({{ airport.identifier }})</h3>
+            </div>
+            <div class="col-md-4 flex-fill">
+                <p>Lat/Long: {{airport.latitude}}/{{airport.longitude}}</p>
+            </div>
+        </div>
+      
       <hr class="my-4">
       <div class="row">
         <div class="col-md-4 d-flex flex-column">
