@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { AirportService } from '../../services/airport.service';
 import { Router } from '@angular/router';
 
@@ -7,14 +7,16 @@ import { Router } from '@angular/router';
   templateUrl: './search-bar.component.html',
   styleUrls: ['./search-bar.component.css'],
 })
-export class SearchBarComponent {
+export class SearchBarComponent implements OnInit {
 
-  constructor(private airportService: AirportService, private router: Router) { }
+  constructor(private airportService: AirportService) { }
+
+  ngOnInit(): void {
+  }
 
   onGoButtonClick() {
     const searchTerm = (document.querySelector('input') as HTMLInputElement).value;
     this.airportService.setAirportId(searchTerm);
-    this.router.navigate(['/airports']);
   }
 
   @HostListener('document:keydown', ['$event'])

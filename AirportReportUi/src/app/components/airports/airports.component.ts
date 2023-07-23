@@ -20,13 +20,15 @@ export class AirportsComponent implements OnInit {
     this.getAirport();
   }
 
-  getAirports(): void {
-    this.airportService.getAirports()
-      .subscribe(airports => this.airports = airports);
+  hasAirports(): boolean {
+    return this.airports.length > 0;
   }
 
-  getAirport(): void {
-    this.airportService.getAirport()
-      .subscribe(airport => this.airports.push(airport));
+  // private getAirports(): void {
+
+  // }
+
+  private getAirport(): void {
+    this.airports.push(this.airportService.getAirport());
   }
 }
