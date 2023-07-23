@@ -258,11 +258,11 @@ public class AirportReportService : IAirportReportService
             var icao = rootElement.GetProperty("icao").GetString();
             var name = rootElement.GetProperty("name").GetString();
 
-            // Not sure if culture invariance is necessary, but may help
-            // in situations where the API returns a decimal with a comma.
-            var latitude = rootElement.GetProperty("latitude").GetDecimal().ToString(CultureInfo.InvariantCulture);
-            var longitude = rootElement.GetProperty("longitude").GetDecimal().ToString(CultureInfo.InvariantCulture);
-
+            decimal latitude = rootElement.GetProperty("latitude").GetDecimal();
+            decimal longitude = rootElement.GetProperty("longitude").GetDecimal();            
+            
+            LatLong latLong = GetNormalizedLatLong(latitude, longitude);
+            
             JsonElement runways = rootElement.GetProperty("runways");
             List<RunwayModel> runwayModels = MapRunways(runways);
 
@@ -270,8 +270,8 @@ public class AirportReportService : IAirportReportService
             {
                 Identifier = icao,
                 Name = name,
-                Latitude = latitude,
-                Longitude = longitude,
+                Latitude = latLong.Latitude,
+                Longitude = latLong.Longitude,
                 Runways = runwayModels
             };
         }
@@ -281,6 +281,39 @@ public class AirportReportService : IAirportReportService
         }
 
         return new AirportDetailsModel();
+    }
+
+    private static LatLong GetNormalizedLatLong(decimal latitude, decimal longitude)
+    {
+        // Need to determine whether the latitude is in the northern or southern hemisphere
+        // and whether the longitude is in the eastern or western hemisphere.
+        // Latitude is positive if in northern hemisphere, negative if in southern hemisphere.
+        // Longitude is positive if in eastern hemisphere, negative if in western hemisphere.
+        string latitudeDirection = latitude > 0 ? "N" : "S";
+        string longitudeDirection = longitude > 0 ? "E" : "W";
+        
+        string latitudeString = GetNormalizedCoordinate(Math.Abs(latitude), latitudeDirection);
+        string longitudeString = GetNormalizedCoordinate(Math.Abs(longitude), longitudeDirection);
+        
+        return new LatLong
+        {
+            Latitude = latitudeString,
+            Longitude = longitudeString
+        };
+    }
+    
+    private static string GetNormalizedCoordinate(decimal coordinate, string direction)
+    {
+        // Cast both decimals to strings, then split by decimal point.
+        string[] coordinateSplit = coordinate.ToString(CultureInfo.InvariantCulture).Split('.');
+        string coordinateHours = coordinateSplit[0];
+        string coordinateMinutes = coordinateSplit[1];
+        
+        decimal coordinateHoursAsAPercentage = decimal.Parse($".{coordinateMinutes}");
+        decimal coordinateHoursAsMinutes = coordinateHoursAsAPercentage * 60;
+        string coordinateMinutesString = coordinateHoursAsMinutes.ToString("F2", CultureInfo.InvariantCulture);
+        
+        return $"{direction}{coordinateHours}°{coordinateMinutesString}'";
     }
 
     private static string GetCloudCoverage(JsonElement clouds)
