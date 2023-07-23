@@ -1,4 +1,4 @@
-using System.Runtime.InteropServices.ComTypes;
+using System.Net;
 using AirportReportApi.Core.Controllers;
 using AirportReportApi.Core.Models;
 using AirportReportApi.Core.Services;
@@ -43,7 +43,8 @@ public class AirportControllerTests
         var airportId = "NonExistentId";
         
         var mockService = new Mock<IAirportReportService>();
-        mockService.Setup(s => s.GetAirportReportById(airportId))!.ReturnsAsync((AirportDto) null!);
+        mockService.Setup(s => s.GetAirportReportById(airportId))!
+            .ReturnsAsync(() => throw new HttpRequestException("Not Found", null, HttpStatusCode.NotFound));
         
         var mockLogger = new Mock<ILogger<AirportController>>();
         var controller = new AirportController(mockService.Object, mockLogger.Object);
@@ -101,7 +102,8 @@ public class AirportControllerTests
         var airportIds = new List<string> {"NonExistentId1", "NonExistentId2"};
         
         var mockService = new Mock<IAirportReportService>();
-        mockService.Setup(s => s.GetAirportReportsByIds(airportIds)).ReturnsAsync(new List<AirportDto>());
+        mockService.Setup(s => s.GetAirportReportsByIds(airportIds))
+            .ReturnsAsync(() => throw new HttpRequestException("Not Found", null, HttpStatusCode.NotFound));
         
         var mockLogger = new Mock<ILogger<AirportController>>();
         var controller = new AirportController(mockService.Object, mockLogger.Object);
