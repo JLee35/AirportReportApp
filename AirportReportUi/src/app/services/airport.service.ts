@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Airport } from '../interfaces/airport';
 import { Router } from '@angular/router';
 import { Observable, delay } from 'rxjs';
 import { config } from '../config';
+import { throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -39,6 +41,7 @@ export class AirportService {
     else {
       // Real calls.
       response = this.http.post<Airport[]>(this.airportsUrl, airportIds, this.httpOptions);
+
       response.subscribe(airports => {
         this.airports = airports;
         this.router.navigate(['/airports']);

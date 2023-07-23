@@ -1,5 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { AirportService } from '../../services/airport.service';
+import { catchError, of } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-search-bar',
@@ -9,6 +11,9 @@ import { AirportService } from '../../services/airport.service';
 export class SearchBarComponent implements OnInit {
   inputValue = '';
   isButtonDisabled = true;
+
+  errorMessage = '';
+  isErrorVisible = false;
 
   constructor(private airportService: AirportService) { }
 
@@ -21,7 +26,16 @@ export class SearchBarComponent implements OnInit {
     this.disableGoButton();
     this.showLoader();
 
-    this.airportService.fetchAirportsFromApi(searchTerm);
+    this.airportService.fetchAirportsFromApi(searchTerm).pipe(
+      catchError(error => {
+        this.errorMessage = `An error occured: ${error.error}`;
+        // alert('An error occurred: ' + error.error);
+        this.isErrorVisible = true;
+        return of([]);
+      })).subscribe(() => {
+        this.hideLoader();
+        this.enableGoButton();
+      });
   }
 
   @HostListener('document:keydown', ['$event'])

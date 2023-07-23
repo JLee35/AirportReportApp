@@ -43,3 +43,7 @@
     opacity: 0.5;
     color: #999;
 }
+
+.error-alert {
+    font-size: 18px;
+}
