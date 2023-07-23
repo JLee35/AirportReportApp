@@ -9,40 +9,41 @@ import { Router } from '@angular/router';
 })
 export class AirportService {
 
-  private airportsUrl = "app/airports";
-  private airportId = "";
-  private airport: Airport | undefined;
+  // private airportsUrl = "app/airports";
+  private airportsUrl = "http://localhost:7051";
+  private airports: Airport[] = [];
 
-  httpOptions = {
+  private httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
   constructor(private http: HttpClient, private router: Router) { }
 
-  setAirportId(id: string) {
-    this.airportId = id;
-    this.setAirport(id);
-  }
+  public fetchAirportsFromApi(commaSeparatedIds: string): void {
+    this.airports = [];
+    let airportIds: string[] = AirportService.getAirportIds(commaSeparatedIds);
 
-  setAirport(id: string) {
-    const url = `${this.airportsUrl}/${id}`;
-    let response = this.http.get<Airport>(url);
-    response.subscribe((airport) => {
-      this.airport = airport;
+    let response = this.http.post<Airport[]>(this.airportsUrl, { airportIds }, this.httpOptions);
+    response.subscribe(airports => {
+      this.airports = airports;
       this.router.navigate(['/airports']);
     });
+
+    // this.http.get<Airport[]>(this.airportsUrl, this.httpOptions).subscribe(airports => {
+    //   this.airports = airports.filter(airport => commaSeparatedIds.includes(airport.id));
+    // });
   }
 
-  getAirports(): Observable<Airport[]> {
-    return this.http.get<Airport[]>(this.airportsUrl);
+  public getAirports(): Airport[] {
+    return this.airports;
   }
 
-  getAirport(): Airport {
-    return this.airport as Airport;
+  public hasAirports(): boolean {
+    return this.airports.length > 0;
   }
 
-  hasAirport(): boolean {
-    return this.airport != null;
+  public static getAirportIds(ids: string): string[] {
+    // Parse the comma-separated list of airport IDs, trimming any whitespace and casting to uppercase.
+    return ids.split(',').map(id => id.trim().toUpperCase());
   }
-
 }

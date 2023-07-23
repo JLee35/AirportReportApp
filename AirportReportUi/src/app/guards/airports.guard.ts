@@ -8,7 +8,8 @@ export const airportsGuard: CanActivateFn = (route, state) => {
   // to ensure it came from the 'onGoButtonClick' method in the
   // SearchBarComponent. If it didn't, then we need to redirect
   // the user to the landing page.
-  if (inject(AirportService).hasAirport()) {
+
+  if (inject(AirportService).hasAirports()) {
     return true;
   }
 

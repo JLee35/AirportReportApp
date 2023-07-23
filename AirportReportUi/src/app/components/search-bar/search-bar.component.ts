@@ -16,7 +16,7 @@ export class SearchBarComponent implements OnInit {
 
   onGoButtonClick() {
     const searchTerm = (document.querySelector('input') as HTMLInputElement).value;
-    this.airportService.setAirportId(searchTerm);
+    this.airportService.fetchAirportsFromApi(searchTerm);
   }
 
   @HostListener('document:keydown', ['$event'])

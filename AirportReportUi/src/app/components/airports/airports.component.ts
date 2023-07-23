@@ -15,20 +15,15 @@ export class AirportsComponent implements OnInit {
   constructor(private airportService: AirportService) { }
 
   ngOnInit(): void {
-    console.log("airport component ngOnInit");
-    // this.getAirports();
-    this.getAirport();
+    this.getAirports();
   }
 
   hasAirports(): boolean {
     return this.airports.length > 0;
   }
 
-  // private getAirports(): void {
-
-  // }
-
-  private getAirport(): void {
-    this.airports.push(this.airportService.getAirport());
+  private getAirports(): void {
+    this.airports = [];
+    this.airports.concat(this.airportService.getAirports());
   }
 }
