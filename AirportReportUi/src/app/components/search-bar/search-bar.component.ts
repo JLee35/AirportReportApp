@@ -1,6 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { AirportService } from '../../services/airport.service';
-import { Observable, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-search-bar',
@@ -21,10 +20,6 @@ export class SearchBarComponent implements OnInit {
     this.showLoader();
 
     this.airportService.fetchAirportsFromApi(searchTerm).subscribe(
-      () => {
-        this.hideLoader();
-        this.enableGoButton();
-      },
       (error) => {
         this.hideLoader();
         this.enableGoButton();
