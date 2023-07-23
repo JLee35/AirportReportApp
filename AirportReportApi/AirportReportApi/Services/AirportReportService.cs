@@ -84,7 +84,7 @@ public class AirportReportService : IAirportReportService
         _logger.LogInformation("GetAirportWeatherById called with id: {Id}", id);
         
         AirportWeatherModel weatherModel = new();
-        JsonElement conditionsElement, forecastConditionsElement, forecastPeriodElement;
+        JsonElement conditionsElement, forecastConditionsElement;
         
         try
         {
@@ -94,7 +94,6 @@ public class AirportReportService : IAirportReportService
             conditionsElement = reportElement.GetProperty("conditions");
             JsonElement forecastElement = reportElement.GetProperty("forecast");
             forecastConditionsElement = forecastElement.GetProperty("conditions");
-            forecastPeriodElement = forecastElement.GetProperty("period");
         }
         catch (KeyNotFoundException ex)
         {
@@ -103,11 +102,8 @@ public class AirportReportService : IAirportReportService
         }
         
         weatherModel = MapCurrentAirportWeather(conditionsElement);
-        var weatherForecast = GetWeatherForecast(forecastConditionsElement);
-        weatherModel.WeatherForecast = weatherForecast;
-        
-        // Get time offset.
-        weatherModel.WeatherForecast.TimeOffset = GetForecastTimeOffset(forecastPeriodElement);
+        List<WindForecastModel> windForecasts = GetWindForecast(forecastConditionsElement);
+        weatherModel.WindForecasts = windForecasts;
         
         _logger.LogInformation("GetAirportWeatherById returning weatherModel: {WeatherModel}", weatherModel);
         return weatherModel;
@@ -195,19 +191,10 @@ public class AirportReportService : IAirportReportService
         return weatherModel;
     }
     
-    private WeatherForecastModel GetWeatherForecast(JsonElement forecastConditionsElement)
-    {
-        WeatherForecastModel weatherForecastModel = new()
-        {
-            WindForecasts = GetWindForecastModels(forecastConditionsElement)
-        };
-        return weatherForecastModel;
-    }
-
-    private List<WindForecastModel> GetWindForecastModels(JsonElement conditionsElement)
+    private List<WindForecastModel> GetWindForecast(JsonElement forecastConditionsElement)
     {
         List<WindForecastModel> windForecastModels = new();
-        var conditions = GetChildElements(conditionsElement);
+        var conditions = GetChildElements(forecastConditionsElement);
         
         // According to specs, we only need the first two forecasts if available.
         for (int forecastCount = 0; forecastCount < 2; forecastCount++)
@@ -218,8 +205,12 @@ public class AirportReportService : IAirportReportService
                 decimal windSpeedKts = windElement.GetProperty("speedKts").GetDecimal();
                 bool isWindVariable = windElement.GetProperty("variable").GetBoolean();
 
+                JsonElement periodElement = conditions[forecastCount].GetProperty("period");
+                string forecastTimeOffset = GetForecastTimeOffset(periodElement);
+
                 var windForecastModel = new WindForecastModel
                 {
+                    TimeOffset = forecastTimeOffset,
                     WindSpeedKts = windSpeedKts,
                     IsWindVariable = isWindVariable
                 };

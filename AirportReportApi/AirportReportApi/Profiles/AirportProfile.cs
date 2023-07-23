@@ -12,7 +12,7 @@ public class AirportProfile : Profile
             .ForPath(dest => dest.Weather.RelativeHumidity, opt => opt.MapFrom(src => src.RelativeHumidityPercentage))
             .ForPath(dest => dest.Weather.CloudCoverage, opt => opt.MapFrom(src => src.CloudCoverage))
             .ForPath(dest => dest.Weather.VisibilitySm, opt => opt.MapFrom(src => src.VisibilitySm))
-            .ForPath(dest => dest.Weather.WeatherForecast, opt => opt.MapFrom(src => src.WeatherForecast))
+            .ForPath(dest => dest.Weather.WindForecasts, opt => opt.MapFrom(src => src.WindForecasts))
             .ForPath(dest => dest.Weather.WindSpeedMph, opt => opt.MapFrom(src => $"{src.WindSpeedKts * (decimal)1.15078}"))
             .ForPath(dest => dest.Weather.WindDirection,
                 opt => opt.MapFrom(src => GetCardinalDirection(src.WindDirectionDegrees, src.IsWindVariable)));
