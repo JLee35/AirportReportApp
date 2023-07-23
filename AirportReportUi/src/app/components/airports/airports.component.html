@@ -1,97 +1,62 @@
-<h2 class="text-center">Airports</h2>
 <div class="container">
-            <div *ngFor="let airport of airports" class="jumbotron">
-                <h3 class="text-center">{{airport.name}} ({{airport.identifier}})</h3>
+    <div *ngFor="let airport of airports" class="jumbotron">
+      <h3 class="text-center">{{ airport.name }} ({{ airport.identifier }})</h3>
+      <hr class="my-4">
+      <div class="row">
+        <div class="col-md-4 d-flex flex-column">
+          <div class="card flex-grow-1 overflow-auto">
+            <div class="card-body">
+              <div class="card-title">
+                <h4 class="text-center">Weather</h4>
                 <hr class="my-4">
-                <div class ="container">
-                    <div class="row">
-                        <div class="col d-flex flex-column">
-                            <div class="card flex-grow-1 overflow-auto">
-                                <div class="card-body">
-                                    <div class="card-title">
-                                        <h4 class="text-center">Weather</h4>
-                                        <hr class="my-4">
-                                    </div>
-                                    <div class="card-text">
-                                        <p>Temperature: {{airport.weather.temperatureInF}}</p>
-                                        <p>Humidity: {{airport.weather.relativeHumidity}}</p>
-                                        <p>Clouds: {{airport.weather.cloudCoverage}}</p>
-                                        <p>Visibility: {{airport.weather.visibilitySm}}</p>
-                                        <p>Wind Speed: {{airport.weather.windSpeedMph}}</p>
-                                        <p>Wind Direction: {{airport.weather.windDirection}}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col d-flex flex-column">
-                            <div class="container flex-grow-1 overflow-auto">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div classs="card-title">
-                                            <h4 class="text-center">Forecasted Winds</h4>
-                                            <hr class="my-4">
-                                        </div>
-                                        <div class="card-text">
-                                            <div *ngFor="let forecast of airport.weather.windForecasts">
-                                                <p>Time Until Active: {{forecast.timeOffset}}</p>
-                                                <p>Speed: {{forecast.windSpeedKts}} kts</p>
-                                                <p>Direction: {{forecast.windDirectionDegrees}}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col d-flex flex-column">
-                            <div class="container flex-grow-1 overflow-auto">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="card-title">
-                                            <h4 class="text-center">Runways</h4>
-                                            <hr class="my-4">
-                                        </div>
-                                        <div class="card-text">
-                                            <div class="row">
-                                                <div class="col" *ngFor="let runway of airport.runways; let even = even">
-                                                    <p>
-                                                        Name: {{runway.name}}
-                                                        <span *ngIf="runway.isBestRunway" class="badge badge-primary">Best</span>
-                                                    </p>
-                                                    <p>Magnetic: {{runway.magneticHeading}}</p>
-                                                </div>
-                                            </div>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- <div class="row">
-                        
-                        <div class="col">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="card-title">
-                                        <h4 class="text-center">Location</h4>
-                                        <hr class="my-4">
-                                    </div>
-                                    <div class="card-text">
-                                        <p>Latitude: {{airport.latitude}}</p>
-                                        <p>Longitude: {{airport.longitude}}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <p class="lead">
-                                <a class="btn btn-primary btn-lg" href="#" role="button">Delete</a>
-                            </p>
-                        </div>
-                    </div> -->
+              </div>
+              <div class="card-text">
+                <p>Temperature: {{ airport.weather.temperatureInF }}</p>
+                <p>Humidity: {{ airport.weather.relativeHumidity }}</p>
+                <p>Clouds: {{ airport.weather.cloudCoverage }}</p>
+                <p>Visibility: {{ airport.weather.visibilitySm }}</p>
+                <p>Wind Speed: {{ airport.weather.windSpeedMph }}</p>
+                <p>Wind Direction: {{ airport.weather.windDirection }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 d-flex flex-column">
+          <div class="card flex-grow-1 overflow-auto">
+            <div class="card-body">
+              <div class="card-title">
+                <h4 class="text-center">Forecasted Winds</h4>
+                <hr class="my-4">
+              </div>
+              <div class="card-text">
+                <div *ngFor="let forecast of airport.weather.windForecasts">
+                  <p>Time Until Active: {{ forecast.timeOffset }}</p>
+                  <p>Speed: {{ forecast.windSpeedKts }} kts</p>
+                  <p>Direction: {{ forecast.windDirectionDegrees }}</p>
                 </div>
-                
-            </div>  
-</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 d-flex flex-column">
+          <div class="card flex-grow-1 overflow-auto">
+            <div class="card-body">
+              <div class="card-title">
+                <h4 class="text-center">Runways</h4>
+                <hr class="my-4">
+              </div>
+              <div class="card-text">
+                <div *ngFor="let runway of airport.runways">
+                <p>
+                    Rwy {{ runway.name }} ({{ runway.magneticHeading }})
+                    <span *ngIf="runway.isBestRunway" class="badge badge-primary">Best</span>
+                </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

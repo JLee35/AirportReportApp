@@ -38,7 +38,7 @@ export class InMemoryDataService implements InMemoryDbService {
         },
         runways: [
           {
-            name: "1",
+            name: "01",
             magneticHeading: "010",
             isBestRunway: false
           },
@@ -78,7 +78,7 @@ export class InMemoryDataService implements InMemoryDbService {
         },
         runways: [
           {
-            name: "1",
+            name: "01",
             magneticHeading: "010",
             isBestRunway: false
           },
@@ -118,7 +118,7 @@ export class InMemoryDataService implements InMemoryDbService {
         },
         runways: [
           {
-            name: "1",
+            name: "01",
             magneticHeading: "010",
             isBestRunway: false
           },

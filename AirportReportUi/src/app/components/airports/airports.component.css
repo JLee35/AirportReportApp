@@ -8,3 +8,7 @@ p {
     font-weight: bold;
     font-size: 20px;
 }
+
+.col-md-4 {
+    flex: 1;
+}
