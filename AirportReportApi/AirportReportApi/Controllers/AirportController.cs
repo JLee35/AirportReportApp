@@ -1,4 +1,5 @@
-﻿using AirportReportApi.Core.Models;
+﻿using System.Net;
+using AirportReportApi.Core.Models;
 using AirportReportApi.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,13 +28,24 @@ public class AirportController : ControllerBase
     public async Task<IActionResult> GetAirportById(string id)
     {
         _logger.LogInformation("GetAirportById called with id: {Id}", id);
-        AirportDto? dto = await _service.GetAirportReportById(id);
-        
-        if (dto == null)
+        AirportDto? dto;
+
+        try
         {
-            var message = $"Airport with id {id} not found";
-            _logger.LogInformation(message);
-            return NotFound(message);
+            dto = await _service.GetAirportReportById(id);
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.StatusCode == HttpStatusCode.NotFound)
+            {
+                _logger.LogInformation(e.Message);
+                return NotFound(e.Message);
+            }
+            else
+            {
+                _logger.LogInformation(e.Message);
+                return StatusCode(500, e.Message);
+            }
         }
         
         _logger.LogInformation("GetAirportById returning dto: {Dto}", dto);
@@ -50,12 +62,22 @@ public class AirportController : ControllerBase
     public async Task<IActionResult> GetAirportsByIds([FromBody] List<string> ids)
     {
         _logger.LogInformation("GetAirportsByIds called with ids: {Ids}", ids);
-
-        List<AirportDto> airports = await _service.GetAirportReportsByIds(ids);
-
-        if (airports.Count == 0)
+        List<AirportDto>? airports;
+        
+        try
         {
-            return NotFound("No airports found");
+            airports = await _service.GetAirportReportsByIds(ids);
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.StatusCode == HttpStatusCode.NotFound)
+            {
+                _logger.LogInformation(e.Message);
+                return NotFound(e.Message);
+            }
+
+            _logger.LogInformation(e.Message);
+            return StatusCode(500, e.Message);
         }
         
         _logger.LogInformation("GetAirportsByIds returning airports: {Airports}", airports);
