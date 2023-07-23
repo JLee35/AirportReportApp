@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { Airport } from '../interfaces/airport';
 import { Router } from '@angular/router';
 
@@ -21,18 +20,18 @@ export class AirportService {
 
   public fetchAirportsFromApi(commaSeparatedIds: string): void {
     this.airports = [];
-    let airportIds: string[] = AirportService.getAirportIds(commaSeparatedIds);
+    let airportIds: string = AirportService.getAirportIdsAsSanitizedJsonString(commaSeparatedIds);
 
-    // let response = this.http.post<Airport[]>(this.airportsUrl, { airportIds }, this.httpOptions);
-    // response.subscribe(airports => {
-    //   this.airports = airports;
-    //   this.router.navigate(['/airports']);
-    // });
-
-    this.http.get<Airport>("https://localhost:7051/Airport/KGEG", this.httpOptions).subscribe(airport => {
-      this.airports.push(airport);
+    let response = this.http.post<Airport[]>(this.airportsUrl, airportIds, this.httpOptions);
+    response.subscribe(airports => {
+      this.airports = airports;
       this.router.navigate(['/airports']);
     });
+
+    // this.http.get<Airport>("https://localhost:7051/Airport/KGEG", this.httpOptions).subscribe(airport => {
+    //   this.airports.push(airport);
+    //   this.router.navigate(['/airports']);
+    // });
   }
 
   public getAirports(): Airport[] {
@@ -43,8 +42,30 @@ export class AirportService {
     return this.airports.length > 0;
   }
 
-  public static getAirportIds(ids: string): string[] {
-    // Parse the comma-separated list of airport IDs, trimming any whitespace and casting to uppercase.
-    return ids.split(',').map(id => id.trim().toUpperCase());
+  public static formatIdsToJSONString(ids: string[]): string {
+    const formattedIds = ids.map(id => `"${id}"`).join(',');
+    return `[${formattedIds}]`;
   }
+
+  private static getAirportIdsAsSanitizedJsonString(ids: string): string {
+    let airportIds: string[] = AirportService.sanitizeIds(ids.split(','));
+    return AirportService.formatIdsToJSONString(airportIds);
+  }
+
+  private static sanitizeIds(ids: string[]): string[] {
+    // Remove any empty strings.
+    let sanitizedIds = ids.filter(id => id.length > 0);
+
+    // Trim whitespace.
+    sanitizedIds = sanitizedIds.map(id => id.trim());
+
+    // Cast to uppercase.
+    sanitizedIds = sanitizedIds.map(id => id.toUpperCase());
+
+    // Remove any duplicates.
+    sanitizedIds = sanitizedIds.filter((id, index) => sanitizedIds.indexOf(id) === index);
+
+    return sanitizedIds;
+  }
+
 }
