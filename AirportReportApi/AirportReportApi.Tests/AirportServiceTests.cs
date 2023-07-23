@@ -1,5 +1,6 @@
 using AirportReportApi.Core;
 using AirportReportApi.Core.Enums;
+using AirportReportApi.Core.Logs;
 using AirportReportApi.Core.Models;
 using AirportReportApi.Core.Repositories;
 using AirportReportApi.Core.Services;

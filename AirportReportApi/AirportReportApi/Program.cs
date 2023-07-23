@@ -3,7 +3,7 @@ using AirportReportApi.Core.Repositories;
 using AirportReportApi.Core.Services;
 using Microsoft.Extensions.Options;
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
 // Set up logging.
@@ -29,6 +29,13 @@ builder.Services.AddScoped<IAirportReportService, AirportReportService>();
 builder.Services.AddScoped<IAirportRepository, AirportRepository>();
 builder.Services.AddAutoMapper(typeof(Program));
 
+// Make sure we use the same host each time.
+string? webHostUrl = configuration.GetSection("WebHostUrl").Get<string>();
+if (webHostUrl is not null)
+{
+    builder.WebHost.UseUrls(webHostUrl);
+}
+
 // Enable CORS.
 var corsOrigins = configuration.GetSection("AllowedOrigins").Get<List<string>>();
 if (corsOrigins is null)
@@ -37,7 +44,7 @@ if (corsOrigins is null)
 }
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
+    options.AddPolicy(name: myAllowSpecificOrigins,
         policy =>
         {
             foreach (var corsOrigin in corsOrigins)
@@ -59,7 +66,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors(MyAllowSpecificOrigins);
+app.UseCors(myAllowSpecificOrigins);
 app.UseAuthorization();
 
 app.MapControllers();
