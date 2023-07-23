@@ -8,8 +8,8 @@ import { Router } from '@angular/router';
 })
 export class AirportService {
 
-  // private airportsUrl = "app/airports";
-  private airportsUrl = "https://localhost:7051/Airport/multiple";
+  private airportsUrl = "app/airports";
+  // private airportsUrl = "https://localhost:7051/Airport/multiple";
   private airports: Airport[] = [];
 
   private httpOptions = {
@@ -22,16 +22,18 @@ export class AirportService {
     this.airports = [];
     let airportIds: string = AirportService.getAirportIdsAsSanitizedJsonString(commaSeparatedIds);
 
-    let response = this.http.post<Airport[]>(this.airportsUrl, airportIds, this.httpOptions);
-    response.subscribe(airports => {
+    // TODO: For real calls.
+    // let response = this.http.post<Airport[]>(this.airportsUrl, airportIds, this.httpOptions);
+    // response.subscribe(airports => {
+    //   this.airports = airports;
+    //   this.router.navigate(['/airports']);
+    // });
+
+    // TODO: For mock calls.
+    this.http.get<Airport[]>(this.airportsUrl, this.httpOptions).subscribe(airports => {
       this.airports = airports;
       this.router.navigate(['/airports']);
     });
-
-    // this.http.get<Airport>("https://localhost:7051/Airport/KGEG", this.httpOptions).subscribe(airport => {
-    //   this.airports.push(airport);
-    //   this.router.navigate(['/airports']);
-    // });
   }
 
   public getAirports(): Airport[] {
@@ -48,7 +50,7 @@ export class AirportService {
   }
 
   private static getAirportIdsAsSanitizedJsonString(ids: string): string {
-    let airportIds: string[] = AirportService.sanitizeIds(ids.split(','));
+    let airportIds: string[] = AirportService.sanitizeIds(ids.split(' '));
     return AirportService.formatIdsToJSONString(airportIds);
   }
 
@@ -67,5 +69,4 @@ export class AirportService {
 
     return sanitizedIds;
   }
-
 }
