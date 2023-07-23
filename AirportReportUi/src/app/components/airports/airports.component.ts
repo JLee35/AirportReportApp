@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Airport } from '../../interfaces/airport';
 import { AirportService } from '../../services/airport.service';
+import { Location } from '@angular/common';
 
 
 @Component({
@@ -12,7 +13,7 @@ export class AirportsComponent implements OnInit {
 
   airports: Airport[] = [];
 
-  constructor(private airportService: AirportService) { }
+  constructor(private airportService: AirportService, private location: Location) { }
 
   ngOnInit(): void {
     this.airports = [];
@@ -25,5 +26,9 @@ export class AirportsComponent implements OnInit {
 
   private getAirports(): void {
     this.airports = this.airportService.getAirports();
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }
