@@ -236,8 +236,11 @@ public class AirportReportService : IAirportReportService
     {
         var dateStart = forecastPeriodElement.GetProperty("dateStart").GetString();
         
-        _logger.LogWarning("dateStart was found to be null in GetForecastTimeOffset");
-        if (dateStart is null) return string.Empty;
+        if (dateStart is null)
+        {
+            _logger.LogWarning("dateStart was found to be null in GetForecastTimeOffset");
+            return string.Empty;
+        }
         
         var start = DateTimeOffset.Parse(dateStart).UtcDateTime;
         var currentTime = DateTime.UtcNow;
