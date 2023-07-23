@@ -1,7 +1,7 @@
 import { WindForecast } from "./wind-forecast";
 
 export interface AirportWeather {
-    temperatureF: string;
+    temperatureInF: string;
     relativeHumidity: string;
     cloudCoverage: string;
     visibilitySm: string;

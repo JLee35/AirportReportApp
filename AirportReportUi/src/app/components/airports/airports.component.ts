@@ -15,6 +15,7 @@ export class AirportsComponent implements OnInit {
   constructor(private airportService: AirportService) { }
 
   ngOnInit(): void {
+    this.airports = [];
     this.getAirports();
   }
 
@@ -23,7 +24,6 @@ export class AirportsComponent implements OnInit {
   }
 
   private getAirports(): void {
-    this.airports = [];
-    this.airports.concat(this.airportService.getAirports());
+    this.airports = this.airportService.getAirports();
   }
 }

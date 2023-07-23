@@ -2,7 +2,7 @@ import { AirportWeather } from "./airport-weather";
 import { Runway } from "./runway";
 
 export interface Airport {
-    id: string;
+    identifier: string;
     name: string;
     latitude: string;
     longitude: string;

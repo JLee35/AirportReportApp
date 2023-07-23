@@ -23,15 +23,16 @@ export class AirportService {
     this.airports = [];
     let airportIds: string[] = AirportService.getAirportIds(commaSeparatedIds);
 
-    let response = this.http.post<Airport[]>(this.airportsUrl, { airportIds }, this.httpOptions);
-    response.subscribe(airports => {
-      this.airports = airports;
+    // let response = this.http.post<Airport[]>(this.airportsUrl, { airportIds }, this.httpOptions);
+    // response.subscribe(airports => {
+    //   this.airports = airports;
+    //   this.router.navigate(['/airports']);
+    // });
+
+    this.http.get<Airport>("https://localhost:7051/Airport/KGEG", this.httpOptions).subscribe(airport => {
+      this.airports.push(airport);
       this.router.navigate(['/airports']);
     });
-
-    // this.http.get<Airport[]>(this.airportsUrl, this.httpOptions).subscribe(airports => {
-    //   this.airports = airports.filter(airport => commaSeparatedIds.includes(airport.id));
-    // });
   }
 
   public getAirports(): Airport[] {
