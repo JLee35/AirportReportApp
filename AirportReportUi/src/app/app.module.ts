@@ -12,14 +12,7 @@ import { InMemoryDataService } from './services/in-memory-data.service';
 import { AirportsComponent } from './components/airports/airports.component';
 import { AppRoutingModule } from './app-routing.module';
 
-
-import { FlexLayoutModule } from '@angular/flex-layout';
-
-// Material imports.
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -31,12 +24,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    MatButtonModule,
     HttpClientModule,
-    MatCardModule,
-    FlexLayoutModule,
-    MatIconModule,
-    MatToolbarModule,
+    NgbModule,
 
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.

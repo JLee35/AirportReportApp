@@ -1,44 +1,46 @@
-<h2>Airports</h2>
-<div fxLayout="row" fxLayoutAlign="center center">
-    <div fxFlex="25%"></div>
-    <div fxFlex="50%">
-        <mat-card *ngFor="let airport of airports" class="card mat-secondary">
-            <mat-card-header>
-                <span>ICAO: {{airport.identifier}}</span>
-                <br>
-                <span>Name: {{airport.name}}</span>
-            </mat-card-header>
-            <mat-card-content>
-                <div>
-                    <span>Latitude: {{airport.latitude}}</span>
-                    <br>
-                    <span>Longitude: {{airport.longitude}}</span>
-                    <br>
-                    <h5>Weather</h5>
-                    <span>Temperature: {{airport.weather.temperatureInF}}</span>
-                    <br>
-                    <span>Humidity: {{airport.weather.relativeHumidity}}</span>
-                    <br>
-                    <span>Clouds: {{airport.weather.cloudCoverage}}</span>
-                    <br>
-                    <span>Visibility: {{airport.weather.visibilitySm}}</span>
-                    <br>
-                    <span>Wind Speed: {{airport.weather.windSpeedMph}}</span>
-                    <br>
-                    <span>Wind Direction: {{airport.weather.windDirection}}</span>
-                    <br>
-                    <h5>Forecasted Winds:</h5>
-                    <br>
-                    <li *ngFor="let forecast of airport.weather.windForecasts">
-                        <span>Time Until Active: {{forecast.timeOffset}}</span>
+<h2 class="text-center">Airports</h2>
+<div class="container">
+            <div *ngFor="let airport of airports" class="jumbotron">
+                <h3>{{airport.name}} ({{airport.identifier}})</h3>
+                <hr class="my-4">
+                <div class ="container">
+                    <div class="row">
+                        <div class="col-sm">
+                            <h4>Weather</h4>
+                            <p>Temperature: {{airport.weather.temperatureInF}}</p>
+                            <br>
+                            <p>Humidity: {{airport.weather.relativeHumidity}}</p>
+                            <br>
+                            <p>Clouds: {{airport.weather.cloudCoverage}}</p>
+                            <br>
+                            <p>Visibility: {{airport.weather.visibilitySm}}</p>
+                            <br>
+                            <p>Wind Speed: {{airport.weather.windSpeedMph}}</p>
+                            <br>
+                            <p>Wind Direction: {{airport.weather.windDirection}}</p>
+                        </div>
+                        <div class="col-sm">
+                            <h4>Forecasted Winds</h4>
+                            <li *ngFor="let forecast of airport.weather.windForecasts">
+                                <p>Time Until Active: {{forecast.timeOffset}}</p>
+                                <br>
+                                <p>Speed: {{forecast.windSpeedKts}} kts</p>
+                                <br>
+                                <p>Direction: {{forecast.windDirectionDegrees}}</p>
+                            </li>
+                        </div>
+                        <div>
+
+                        </div>
+                        <!-- <p>Latitude: {{airport.latitude}}</p>
                         <br>
-                        <span>Speed: {{forecast.windSpeedKts}} kts</span>
-                        <br>
-                        <span>Direction: {{forecast.windDirectionDegrees}}</span>
-                    </li>
+                        <p>Longitude: {{airport.longitude}}</p>
+                            
+                        <p class="lead">
+                            <a class="btn btn-primary btn-lg" href="#" role="button">Delete</a>
+                          </p> -->
+                    </div>
                 </div>
-            </mat-card-content>
-        </mat-card>
-    </div>
-    <div fxFlex="25%"></div>
+                
+            </div>  
 </div>

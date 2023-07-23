@@ -10,7 +10,7 @@ export class InMemoryDataService implements InMemoryDbService {
   createDb() {
     const airports = [
       {
-        id: "KJFK",
+        identifier: "KJFK",
         name: "John F. Kennedy International Airport",
         latitude: "40.6413",
         longitude: "-73.7781",
@@ -50,7 +50,7 @@ export class InMemoryDataService implements InMemoryDbService {
         ]
       },
       {
-        id: "KSFO",
+        identifier: "KSFO",
         name: "San Francisco International Airport",
         latitude: "40.6413",
         longitude: "-73.7781",
@@ -90,7 +90,7 @@ export class InMemoryDataService implements InMemoryDbService {
         ]
       },
       {
-        id: "KSEA",
+        identifier: "KSEA",
         name: "Seattle-Tacoma International Airport",
         latitude: "40.6413",
         longitude: "-73.7781",
