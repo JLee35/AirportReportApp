@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core';
-import { AirportService } from '../airport.service';
+import { AirportService } from '../../services/airport.service';
 import { Router } from '@angular/router';
 
 @Component({

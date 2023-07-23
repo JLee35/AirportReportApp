@@ -3,13 +3,13 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { LandingPageComponent } from './landing-page/landing-page.component';
-import { SearchBarComponent } from './search-bar/search-bar.component';
+import { LandingPageComponent } from './components/landing-page/landing-page.component';
+import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { MatButtonModule } from '@angular/material/button';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemoryDataService } from './in-memory-data.service';
-import { AirportsComponent } from './airports/airports.component';
+import { AirportsComponent } from './components/airports/airports.component';
 import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
@@ -31,7 +31,7 @@ import { AppRoutingModule } from './app-routing.module';
     HttpClientInMemoryWebApiModule.forRoot(
       InMemoryDataService, { dataEncapsulation: false }
     ),
-     AppRoutingModule
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
