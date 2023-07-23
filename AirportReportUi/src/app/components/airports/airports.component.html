@@ -1,9 +1,32 @@
 <h2>Airports</h2>
 <ul >
     <li *ngFor="let airport of airports">
-        <span>ICAO: {{airport.id}}</span>
-        <span>Name: {{airport.name}}</span>
-        <span>Latitude: {{airport.latitude}}</span>
-        <span>Longitude: {{airport.longitude}}</span>
+        <div>
+            <h5>Details</h5>
+            <span>ICAO: {{airport.id}}</span>
+            <br>
+            <span>Name: {{airport.name}}</span>
+            <br>
+            <span>Latitude: {{airport.latitude}}</span>
+            <br>
+            <span>Longitude: {{airport.longitude}}</span>
+            <br>
+            <h5>Weather</h5>
+            <span>Temperature: {{airport.weather.temperatureF}}</span>
+            <br>
+            <span>Humidity: {{airport.weather.relativeHumidity}}</span>
+            <br>
+            <span>Clouds: {{airport.weather.cloudCoverage}}</span>
+            <br>
+            <span>Visibility: {{airport.weather.visibilitySm}}</span>
+            <br>
+            <span>Wind Speed: {{airport.weather.windSpeedMph}}</span>
+            <br>
+            <span>Wind Direction: {{airport.weather.windDirection}}</span>
+            <br>
+            <h5>Weather Forecast</h5>
+        </div>
+        
+
     </li>
 </ul>
