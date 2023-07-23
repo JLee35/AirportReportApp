@@ -25,7 +25,7 @@
                     <p>Humidity: {{ airport.weather.relativeHumidity }}%</p>
                     <p>Clouds: {{ airport.weather.cloudCoverage }}</p>
                     <p>Visibility: {{ airport.weather.visibilitySm }}SM</p>
-                    <p>Wind Speed: {{ airport.weather.windSpeedMph }} MPH</p>
+                    <p>Wind Speed: {{ (airport.weather.windSpeedMph | number) ? (airport.weather.windSpeedMph | number:'1.0-0') : '' }} MPH</p>
                     <p>Wind Direction: {{ airport.weather.windDirection }}</p>
                     </div>
                 </div>
@@ -41,7 +41,7 @@
                     <div class="card-text">
                     <div *ngFor="let forecast of airport.weather.windForecasts">
                         <p>Time Until Active: {{ forecast.timeOffset }}</p>
-                        <p>Speed: {{ forecast.windSpeedMph }} MPH</p>
+                        <p>Speed: {{ (forecast.windSpeedMph | number) ? (forecast.windSpeedMph | number:'1.0-0') : '' }} MPH</p>
                         <p>Direction: {{ forecast.windDirectionDegrees }}°</p>
                     </div>
                     </div>

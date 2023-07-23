@@ -2,18 +2,23 @@ import { Component, OnInit } from '@angular/core';
 import { Airport } from '../../interfaces/airport';
 import { AirportService } from '../../services/airport.service';
 import { Location } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 
 
 @Component({
   selector: 'app-airports',
   templateUrl: './airports.component.html',
-  styleUrls: ['./airports.component.css']
+  styleUrls: ['./airports.component.css'],
+  providers: [DecimalPipe]
 })
 export class AirportsComponent implements OnInit {
 
   airports: Airport[] = [];
 
-  constructor(private airportService: AirportService, private location: Location) { }
+  constructor(
+    private airportService: AirportService,
+    private location: Location,
+    private decimalPipe: DecimalPipe) { }
 
   ngOnInit(): void {
     this.airports = [];
