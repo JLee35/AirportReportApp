@@ -20,7 +20,7 @@ export class InMemoryDataService implements InMemoryDbService {
           cloudCoverage: "Skies few at 10000",
           visibilitySm: "10",
           windSpeedMph: "6",
-          windDirection: "005",
+          windDirection: "SW",
           windForecasts: [
             {
               timeOffset: "0h:33m",
@@ -60,7 +60,7 @@ export class InMemoryDataService implements InMemoryDbService {
           cloudCoverage: "Skies few at 10000",
           visibilitySm: "10",
           windSpeedMph: "6",
-          windDirection: "005",
+          windDirection: "N",
           windForecasts: [
             {
               timeOffset: "0h:33m",
@@ -100,7 +100,7 @@ export class InMemoryDataService implements InMemoryDbService {
           cloudCoverage: "Skies few at 10000",
           visibilitySm: "10",
           windSpeedMph: "6",
-          windDirection: "005",
+          windDirection: "NE",
           windForecasts: [
             {
               timeOffset: "0h:33m",
