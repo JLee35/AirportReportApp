@@ -7,6 +7,8 @@ import { AirportService } from '../../services/airport.service';
   styleUrls: ['./search-bar.component.css'],
 })
 export class SearchBarComponent implements OnInit {
+  inputValue = '';
+  isButtonDisabled = true;
 
   constructor(private airportService: AirportService) { }
 
@@ -24,9 +26,13 @@ export class SearchBarComponent implements OnInit {
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && !this.isButtonDisabled) {
       this.onGoButtonClick();
     }
+  }
+
+  updateButtonState() {
+    this.isButtonDisabled = this.inputValue.trim().length === 0;
   }
 
   private showLoader() {

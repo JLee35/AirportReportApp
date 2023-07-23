@@ -11,6 +11,7 @@ import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemoryDataService } from './services/in-memory-data.service';
 import { AirportsComponent } from './components/airports/airports.component';
 import { AppRoutingModule } from './app-routing.module';
+import { FormsModule } from '@angular/forms';
 
 import { config } from './config';
 
@@ -25,6 +26,7 @@ import { config } from './config';
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    FormsModule,
 
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
