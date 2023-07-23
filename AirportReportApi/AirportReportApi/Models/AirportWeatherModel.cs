@@ -9,5 +9,5 @@ public record AirportWeatherModel
     public decimal WindSpeedKts { get; set; }
     public bool IsWindVariable { get; set; }
     public int WindDirectionDegrees { get; set; }
-    public WeatherForecastModel? WeatherForecast { get; set; }
+    public List<WindForecastModel>? WindForecasts { get; set; }
 }

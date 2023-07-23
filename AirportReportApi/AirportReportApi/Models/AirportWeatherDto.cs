@@ -9,5 +9,5 @@ public class AirportWeatherDto
     public decimal WindSpeedMph { get; set; }
     public string? WindDirection { get; set; }
     
-    public WeatherForecastModel? WeatherForecast { get; set; }
+    public List<WindForecastModel>? WindForecasts { get; set; }
 }
