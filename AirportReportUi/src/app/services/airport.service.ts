@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class AirportService {
 
   // private airportsUrl = "app/airports";
-  private airportsUrl = "http://localhost:7051";
+  private airportsUrl = "https://localhost:7051/Airport/multiple";
   private airports: Airport[] = [];
 
   private httpOptions = {
