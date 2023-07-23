@@ -3,14 +3,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Airport } from '../interfaces/airport';
 import { Router } from '@angular/router';
 import { Observable, delay } from 'rxjs';
+import { config } from '../config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AirportService {
 
-  private airportsUrl = "app/airports";
-  // private airportsUrl = "https://localhost:7051/Airport/multiple";
+  private airportsUrl = config.apiUrl;
   private airports: Airport[] = [];
 
   private httpOptions = {
@@ -23,22 +23,27 @@ export class AirportService {
     this.airports = [];
     let airportIds: string = AirportService.getAirportIdsAsSanitizedJsonString(commaSeparatedIds);
 
-    // TODO: For real calls.
-    // let response = this.http.post<Airport[]>(this.airportsUrl, airportIds, this.httpOptions);
-    // response.subscribe(airports => {
-    //   this.airports = airports;
-    //   this.router.navigate(['/airports']);
-    // });
+    let response = null;
 
-    // TODO: For mock calls.
-    let response = this.http.get<Airport[]>(this.airportsUrl, this.httpOptions).pipe(
-      delay(5000)
-    );
+    if (config.useInMemoryApi) {
+      // Mock calls.
+      response = this.http.get<Airport[]>(this.airportsUrl, this.httpOptions).pipe(
+        delay(5000)
+      );
 
-    response.subscribe(airports => {
-      this.airports = airports;
-      this.router.navigate(['/airports']);
-    });
+      response.subscribe(airports => {
+        this.airports = airports;
+        this.router.navigate(['/airports']);
+      });
+    }
+    else {
+      // Real calls.
+      response = this.http.post<Airport[]>(this.airportsUrl, airportIds, this.httpOptions);
+      response.subscribe(airports => {
+        this.airports = airports;
+        this.router.navigate(['/airports']);
+      });
+    }
 
     return response;
   }

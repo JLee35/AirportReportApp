@@ -12,7 +12,7 @@ import { InMemoryDataService } from './services/in-memory-data.service';
 import { AirportsComponent } from './components/airports/airports.component';
 import { AppRoutingModule } from './app-routing.module';
 
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { config } from './config';
 
 @NgModule({
   declarations: [
@@ -25,14 +25,14 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    NgbModule,
 
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
-    // Remove it when a real server is ready to receive requests.
-    HttpClientInMemoryWebApiModule.forRoot(
-      InMemoryDataService, { dataEncapsulation: false }
-    ),
+    // A flag in the app config file, src/app/config.ts, determines 
+    //whether the app in memory web API is used.
+    config.useInMemoryApi ?
+      HttpClientInMemoryWebApiModule
+        .forRoot(InMemoryDataService, { dataEncapsulation: false }) : [],
     AppRoutingModule
   ],
   providers: [],
