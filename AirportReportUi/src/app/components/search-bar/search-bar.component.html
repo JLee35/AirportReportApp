@@ -4,11 +4,13 @@
             <input class="form-control form-control-lg mr-sm-2" type="search" placeholder="kgeg ksfo kboi" aria-label="Search">
         </div>
         <div class="col-2">
-            <button class="btn btn-outline-success btn-lg my-2 my-sm-0" type="button" (click)="onGoButtonClick()">
-                Go!
-                <span *ngIf="(loading$ | async)" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            </button>
+            <button class="btn btn-outline-success btn-lg my-2 my-sm-0" type="button" (click)="onGoButtonClick()" id="goButton">Go!</button>
         </div>
+    </div>
+</div>
+<div class="text-center" id="loadingDiv">
+    <div class="spinner-border" role="status" >
+        <span class="sr-only" id="loading">Loading...</span>
     </div>
 </div>
 

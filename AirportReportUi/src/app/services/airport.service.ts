@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Airport } from '../interfaces/airport';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, delay } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +31,9 @@ export class AirportService {
     // });
 
     // TODO: For mock calls.
-    let response = this.http.get<Airport[]>(this.airportsUrl, this.httpOptions);
+    let response = this.http.get<Airport[]>(this.airportsUrl, this.httpOptions).pipe(
+      delay(5000)
+    );
 
     response.subscribe(airports => {
       this.airports = airports;

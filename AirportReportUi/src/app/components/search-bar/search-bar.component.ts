@@ -8,26 +8,27 @@ import { Observable, Subject } from 'rxjs';
   styleUrls: ['./search-bar.component.css'],
 })
 export class SearchBarComponent implements OnInit {
-  loading$: Observable<boolean> = new Observable<boolean>();
-  private loadingSubject = new Subject<boolean>();
 
   constructor(private airportService: AirportService) { }
 
   ngOnInit(): void {
-    this.loadingSubject.next(false);
-    this.loading$ = this.loadingSubject.asObservable();
+    this.hideLoader();
   }
 
   onGoButtonClick() {
     const searchTerm = (document.querySelector('input') as HTMLInputElement).value;
-    this.loadingSubject
+    this.disableGoButton();
+    this.showLoader();
+
     this.airportService.fetchAirportsFromApi(searchTerm).subscribe(
       () => {
-        this.loadingSubject.next(false);
+        this.hideLoader();
+        this.enableGoButton();
       },
       (error) => {
-        this.loadingSubject.next(false);
-        console.log(error);
+        this.hideLoader();
+        this.enableGoButton();
+        alert(error);
       }
     )
   }
@@ -37,5 +38,21 @@ export class SearchBarComponent implements OnInit {
     if (event.key === 'Enter') {
       this.onGoButtonClick();
     }
+  }
+
+  private showLoader() {
+    document.getElementById('loadingDiv')!.style.display = 'block';
+  }
+
+  private hideLoader() {
+    document.getElementById('loadingDiv')!.style.display = 'none';
+  }
+
+  private disableGoButton() {
+    (document.getElementById('goButton') as HTMLButtonElement).disabled = true;
+  }
+
+  private enableGoButton() {
+    (document.getElementById('goButton') as HTMLButtonElement).disabled = false;
   }
 }
