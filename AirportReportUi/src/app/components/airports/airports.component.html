@@ -56,7 +56,7 @@
                             <div *ngFor="let runway of airport.runways">
                                 <p>
                                     - Rwy {{ runway.name }} ({{ runway.magneticHeading }}°)
-                                    <span *ngIf="runway.isBestRunway" class="badge badge-primary">Best</span>
+                                    <span *ngIf="runway.isBestRunway" class="badge badge-info">Best</span>
                                 </p>
                             </div>
                         </div>

@@ -1,5 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { AirportService } from '../../services/airport.service';
+import { Observable, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-search-bar',
@@ -7,15 +8,28 @@ import { AirportService } from '../../services/airport.service';
   styleUrls: ['./search-bar.component.css'],
 })
 export class SearchBarComponent implements OnInit {
+  loading$: Observable<boolean> = new Observable<boolean>();
+  private loadingSubject = new Subject<boolean>();
 
   constructor(private airportService: AirportService) { }
 
   ngOnInit(): void {
+    this.loadingSubject.next(false);
+    this.loading$ = this.loadingSubject.asObservable();
   }
 
   onGoButtonClick() {
     const searchTerm = (document.querySelector('input') as HTMLInputElement).value;
-    this.airportService.fetchAirportsFromApi(searchTerm);
+    this.loadingSubject
+    this.airportService.fetchAirportsFromApi(searchTerm).subscribe(
+      () => {
+        this.loadingSubject.next(false);
+      },
+      (error) => {
+        this.loadingSubject.next(false);
+        console.log(error);
+      }
+    )
   }
 
   @HostListener('document:keydown', ['$event'])

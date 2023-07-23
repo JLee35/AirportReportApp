@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Airport } from '../interfaces/airport';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class AirportService {
 
   constructor(private http: HttpClient, private router: Router) { }
 
-  public fetchAirportsFromApi(commaSeparatedIds: string): void {
+  public fetchAirportsFromApi(commaSeparatedIds: string): Observable<Airport[]> {
     this.airports = [];
     let airportIds: string = AirportService.getAirportIdsAsSanitizedJsonString(commaSeparatedIds);
 
@@ -30,10 +31,14 @@ export class AirportService {
     // });
 
     // TODO: For mock calls.
-    this.http.get<Airport[]>(this.airportsUrl, this.httpOptions).subscribe(airports => {
+    let response = this.http.get<Airport[]>(this.airportsUrl, this.httpOptions);
+
+    response.subscribe(airports => {
       this.airports = airports;
       this.router.navigate(['/airports']);
     });
+
+    return response;
   }
 
   public getAirports(): Airport[] {
