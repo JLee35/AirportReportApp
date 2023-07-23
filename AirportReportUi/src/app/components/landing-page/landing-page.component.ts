@@ -7,4 +7,5 @@ import { Component } from '@angular/core';
 })
 export class LandingPageComponent {
   pageTitle = 'Going somewhere?';
+  pageSubtitle = 'Search for airports by ICAO separated by spaces';
 }

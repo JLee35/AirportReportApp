@@ -1,6 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { AirportService } from '../../services/airport.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-search-bar',
