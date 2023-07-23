@@ -21,9 +21,20 @@ export class InMemoryDataService implements InMemoryDbService {
           visibilitySm: "10",
           windSpeedMph: "6",
           windDirection: "005",
-          weatherForecast: {
-            timeOffset: "1h:30m"
-          }
+          windForecasts: [
+            {
+              timeOffset: "0h:33m",
+              windSpeedKts: "10",
+              isWindVariable: false,
+              windDirectionDegrees: "020"
+            },
+            {
+              timeOffset: "1h:33m",
+              windSpeedKts: "15",
+              isWindVariable: false,
+              windDirectionDegrees: "025"
+            }
+          ]
         },
         runways: [
           {

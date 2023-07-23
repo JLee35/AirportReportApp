@@ -24,7 +24,15 @@
             <br>
             <span>Wind Direction: {{airport.weather.windDirection}}</span>
             <br>
-            <h5>Weather Forecast</h5>
+            <h5>Forecasted Winds:</h5>
+            <br>
+            <li *ngFor="let forecast of airport.weather.windForecasts">
+                <span>Time Until Active: {{forecast.timeOffset}}</span>
+                <br>
+                <span>Speed: {{forecast.windSpeedKts}} kts</span>
+                <br>
+                <span>Direction: {{forecast.windDirectionDegrees}}</span>
+            </li>
         </div>
         
 

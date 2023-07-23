@@ -1,4 +1,4 @@
-import { AirportWeatherForecast } from "./airport-weather-forecast";
+import { WindForecast } from "./wind-forecast";
 
 export interface AirportWeather {
     temperatureF: string;
@@ -8,5 +8,5 @@ export interface AirportWeather {
     windSpeedMph: string;
     windDirection: string;
 
-    weatherForecast: AirportWeatherForecast;
+    windForecasts: WindForecast[];
 }
