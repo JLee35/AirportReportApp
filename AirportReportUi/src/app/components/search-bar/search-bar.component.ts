@@ -19,13 +19,7 @@ export class SearchBarComponent implements OnInit {
     this.disableGoButton();
     this.showLoader();
 
-    this.airportService.fetchAirportsFromApi(searchTerm).subscribe(
-      (error) => {
-        this.hideLoader();
-        this.enableGoButton();
-        alert(error);
-      }
-    )
+    this.airportService.fetchAirportsFromApi(searchTerm);
   }
 
   @HostListener('document:keydown', ['$event'])

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, } from '@angular/core';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -8,12 +8,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class AppComponent {
   title = 'FlyWise';
-  subtitle = 'Smartly navigating you through airport information';
 
-  constructor(private modalService: NgbModal) {
+  constructor(private location: Location) {
   }
 
-  public open(modal: any): void {
-    this.modalService.open(modal);
+  goBack(): void {
+    this.location.back();
   }
 }
