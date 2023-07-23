@@ -41,7 +41,7 @@
                     <div class="card-text">
                     <div *ngFor="let forecast of airport.weather.windForecasts">
                         <p>Time Until Active: {{ forecast.timeOffset }}</p>
-                        <p>Speed: {{ forecast.windSpeedKts }} KTS</p>
+                        <p>Speed: {{ forecast.windSpeedMph }} MPH</p>
                         <p>Direction: {{ forecast.windDirectionDegrees }}°</p>
                     </div>
                     </div>

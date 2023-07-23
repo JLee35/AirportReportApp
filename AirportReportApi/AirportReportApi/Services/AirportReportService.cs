@@ -211,7 +211,7 @@ public class AirportReportService : IAirportReportService
                 var windForecastModel = new WindForecastModel
                 {
                     TimeOffset = forecastTimeOffset,
-                    WindSpeedKts = windSpeedKts,
+                    WindSpeedMph = windSpeedKts,
                     IsWindVariable = isWindVariable
                 };
 

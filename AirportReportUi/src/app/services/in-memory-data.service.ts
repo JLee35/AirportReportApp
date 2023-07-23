@@ -24,13 +24,13 @@ export class InMemoryDataService implements InMemoryDbService {
           windForecasts: [
             {
               timeOffset: "0h:33m",
-              windSpeedKts: "10",
+              windSpeedMph: "10",
               isWindVariable: false,
               windDirectionDegrees: "020"
             },
             {
               timeOffset: "1h:33m",
-              windSpeedKts: "15",
+              windSpeedMph: "15",
               isWindVariable: false,
               windDirectionDegrees: "025"
             }
@@ -64,13 +64,13 @@ export class InMemoryDataService implements InMemoryDbService {
           windForecasts: [
             {
               timeOffset: "0h:33m",
-              windSpeedKts: "10",
+              windSpeedMph: "10",
               isWindVariable: false,
               windDirectionDegrees: "020"
             },
             {
               timeOffset: "1h:33m",
-              windSpeedKts: "15",
+              windSpeedMph: "15",
               isWindVariable: false,
               windDirectionDegrees: "025"
             }
@@ -104,13 +104,13 @@ export class InMemoryDataService implements InMemoryDbService {
           windForecasts: [
             {
               timeOffset: "0h:33m",
-              windSpeedKts: "10",
+              windSpeedMph: "10",
               isWindVariable: false,
               windDirectionDegrees: "020"
             },
             {
               timeOffset: "1h:33m",
-              windSpeedKts: "15",
+              windSpeedMph: "15",
               isWindVariable: false,
               windDirectionDegrees: "025"
             }

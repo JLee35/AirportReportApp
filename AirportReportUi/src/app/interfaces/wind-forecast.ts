@@ -1,6 +1,6 @@
 export interface WindForecast {
     timeOffset: string;
-    windSpeedKts: string;
+    windSpeedMph: string;
     isWindVariable: boolean;
     windDirectionDegrees: string;
 }
