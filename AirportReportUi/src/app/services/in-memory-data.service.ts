@@ -12,8 +12,8 @@ export class InMemoryDataService implements InMemoryDbService {
       {
         identifier: "KJFK",
         name: "John F. Kennedy International Airport",
-        latitude: "40.6413",
-        longitude: "-73.7781",
+        latitude: "N47°37.14'",
+        longitude: "W117°32.11'",
         weather: {
           temperatureInF: "32",
           relativeHumidity: "23",
@@ -52,8 +52,8 @@ export class InMemoryDataService implements InMemoryDbService {
       {
         identifier: "KSFO",
         name: "San Francisco International Airport",
-        latitude: "40.6413",
-        longitude: "-73.7781",
+        latitude: "N47°37.14'",
+        longitude: "W117°32.11'",
         weather: {
           temperatureInF: "32",
           relativeHumidity: "23",
@@ -92,8 +92,8 @@ export class InMemoryDataService implements InMemoryDbService {
       {
         identifier: "KSEA",
         name: "Seattle-Tacoma International Airport",
-        latitude: "40.6413",
-        longitude: "-73.7781",
+        latitude: "N47°37.14'",
+        longitude: "W117°32.11'",
         weather: {
           temperatureInF: "32",
           relativeHumidity: "23",
